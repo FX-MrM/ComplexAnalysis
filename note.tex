@@ -1,0 +1,455 @@
+\documentclass{ctexart}
+\usepackage{paracol}
+\usepackage{newtxtext, geometry, amsmath, amssymb,yhmath}
+\usepackage{graphicx}
+\usepackage{amsthm} % 设置定理环境，要在amsmath后用
+\usepackage{xpatch} % 用于去除amsthm定义的编号后面的点
+\usepackage[strict]{changepage} % 提供一个 adjustwidth 环境
+\usepackage{multicol} % 用于分栏
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings}
+\usepackage[fontsize=14pt]{fontsize} % 字号设置
+\usepackage{esvect} % 实现向量箭头输入（显示效果好于\vec{}和\overrightarrow{}），格式为\vv{⟨向量符号⟩}或\vv*{⟨向量符号⟩}{⟨下标⟩} 
+\usepackage[
+            colorlinks, % 超链接以颜色来标识，而并非使用默认的方框来标识
+            linkcolor=mlv,
+            anchorcolor=mlv,
+            citecolor=mlv % 设置各种超链接的颜色
+            ]
+            {hyperref} % 实现引用超链接功能
+\usepackage{tcolorbox} % 盒子效果
+\tcbuselibrary{most} % tcolorbox宏包的设置，详见宏包说明文档
+\tcbuselibrary{breakable=forced}
+\geometry{a4paper,centering,scale=0.8}
+
+% ————————————————————————————————————自定义符号————————————————————————————————————
+\newcommand{\。}{．} % 示例：将指令\。定义为全角句点。
+\newcommand{\zte}{\mathrm{e}} % 正体e
+\newcommand{\ztd}{\mathrm{d}} % 正体d
+\newcommand{\zti}{\mathrm{i}} % 正体i
+\newcommand{\ztj}{\mathrm{j}} % 正体j
+\newcommand{\ztk}{\mathrm{k}} % 正体k
+\newcommand{\CC}{\mathbb{C}} % 黑板粗体C
+\newcommand{\QQ}{\mathbb{Q}} % 黑板粗体Q
+\newcommand{\RR}{\mathbb{R}} % 黑板粗体R
+\newcommand{\ZZ}{\mathbb{Z}} % 黑板粗体Z
+\newcommand{\NN}{\mathbb{N}} % 黑板粗体N
+% ————————————————————————————————————自定义符号————————————————————————————————————
+
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+\definecolor{mlv}{RGB}{40, 137, 124} % 墨绿
+\definecolor{qlv}{RGB}{240, 251, 248} % 浅绿
+\definecolor{slv}{RGB}{33, 96, 92} % 深绿
+\definecolor{qlan}{RGB}{239, 249, 251} % 浅蓝
+\definecolor{slan}{RGB}{3, 92, 127} % 深蓝
+\definecolor{hlan}{RGB}{82, 137, 168} % 灰蓝
+\definecolor{qhuang}{RGB}{246, 250, 235} % 浅黄
+\definecolor{shuang}{RGB}{77, 82, 59} % 深黄
+\definecolor{qzi}{RGB}{240, 243, 252} % 浅紫
+\definecolor{szi}{RGB}{49, 55, 70} % 深紫
+% 将RGB换为rgb，颜色数值取值范围改为0到1
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+
+% ————————————————————————————————————盒子设置————————————————————————————————————
+% tolorbox提供了tcolorbox环境，其格式如下：
+% 第一种格式：\begin{tcolorbox}[colback=⟨背景色⟩, colframe=⟨框线色⟩, arc=⟨转角弧度半径⟩, boxrule=⟨框线粗⟩]   \end{tcolorbox}
+% 其中设置arc=0mm可得到直角；boxrule可换为toprule/bottomrule/leftrule/rightrule可分别设置对应边宽度，但是设置为0mm时仍有细边，若要绘制单边框线推荐使用第二种格式
+% 方括号内加上title=⟨标题⟩, titlerule=⟨标题背景线粗⟩, colbacktitle=⟨标题背景线色⟩可为盒子加上标题及其背景线
+\newenvironment{kuang1}{
+    \begin{tcolorbox}[breakable,colback=hlan, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+\newenvironment{kuang2}{
+    \begin{tcolorbox}[breakable,colback=hlan!5!white, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+% 第二种格式：\begin{tcolorbox}[enhanced, colback=⟨背景色⟩, boxrule=0pt, frame hidden, borderline={⟨框线粗⟩}{⟨偏移量⟩}{⟨框线色⟩}]   {\end{tcolorbox}}
+% 将borderline换为borderline east/borderline west/borderline north/borderline south可分别为四边添加框线，同一边可以添加多条
+% 偏移量为正值时，框线向盒子内部移动相应距离，负值反之
+\newenvironment{kuang3}{
+    \begin{tcolorbox}[breakable,enhanced, colback=hlan!5!white, boxrule=0pt, frame hidden,
+        borderline south={0.5mm}{0.1mm}{hlan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lvse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlv, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slv}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lanse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlan, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{huangse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qhuang, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{shuang}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{zise}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qzi, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{szi}]
+    }
+    {\end{tcolorbox}}
+% tcolorbox宏包还提供了\tcbox指令，用于生成行内盒子，可制作高光效果
+\newcommand{\hl}[1]{
+    \tcbox[on line, arc=0pt, colback=hlan!5!white, colframe=hlan!5!white, boxsep=1pt, left=1pt, right=1pt, top=1.5pt, bottom=1.5pt, boxrule=0pt]
+{\bfseries \color{hlan}#1}}
+% 其中on line将盒子放置在本行（缺失会跳到下一行），boxsep用于控制文本内容和边框的距离，left、right、top、bottom则分别在boxsep的参数的基础上分别控制四边距离
+% ————————————————————————————————————盒子设置————————————————————————————————————
+
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+\setCJKfamilyfont{xbsong}{方正小标宋简体}
+\newcommand{\xbsong}{\CJKfamily{xbsong}}
+% CTeX宏集还预定义了\songti、\heiti、\fangsong、\kaishu、\lishu、\youyuan、\yahei、\pingfang等字体命令
+% 由于未知原因，一些设备可能无法调用这些字体，故此文档暂时未使用
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+\ctexset{
+    % 修改 section。
+    section={   
+    % 设置标题编号前后的词语，使用name={⟨前部分⟩,⟨后部分⟩}参数进行设置。    
+        name={\textbf{第},\textbf{章}\hspace{18pt}},
+    % 使用number参数设置标题编号，\arabic设置为阿拉伯数字，\chinese设置为中文，\roman设置为小写罗马字母，\Roman设置为大写罗马字母，\alph设置为小写英文，\Alph设置为大写英文。
+        number={\textbf{\chinese{section}}},
+    % 参数format设置标题整体的样式。包括标题主题、编号以及编号前后的词语。
+    % 参数format还可以设置标题的对齐方式。居中对齐\centering，左对齐\raggedright，右对齐\hfill
+        format=\color{hlan}\centering\zihao{2}, % 设置 section 标题为正蓝色、黑体、居中对齐、小二号字
+    % 取消编号后的空白。编号后有一段空白，参数aftername=\hspace{0pt}可以用来控制编号与标题之间的距离。
+        aftername={}
+    },
+    % 修改 subsection。
+    subsection={   
+        name={\S \hspace{6pt}, \hspace{8pt}},
+        number={\arabic{section}.\arabic{subsection}},
+        format=\color{hlan}\centering\zihao{-2}, % 设置 subsection 标题为黑体、三号字
+        aftername=\hspace{0pt}
+    },
+    subsubsection={   
+        name={,、},
+        number={\chinese{subsubsection}},
+        format=\raggedright\color{hlan}\zihao{3},
+        aftername=\hspace{0pt}
+    },
+    part={   
+        name={第,部分},
+        number={\chinese{part}},
+        format=\color{white}\centering\bfseries\zihao{-1},
+        aftername=\hspace{1em}
+    }
+}
+% 各个标题设置的各行结尾一定要记得写逗号！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+\newtheoremstyle{t}{0pt}{}{}{\parindent}{\bfseries}{}{1em}{} % 定义新定理风格。格式如下：
+%\newtheoremstyle{⟨风格名⟩}
+%                {⟨上方间距⟩} % 若留空，则使用默认值
+%                {⟨下方间距⟩} % 若留空，则使用默认值
+%                {⟨主体字体⟩} % 如 \itshape
+%                {⟨缩进长度⟩} % 若留空，则无缩进；可以使用 \parindent 进行正常段落缩进
+%                {⟨定理头字体⟩} % 如 \bfseries
+%                {⟨定理头后的标点符号⟩} % 如点号、冒号
+%                {⟨定理头后的间距⟩} % 不可留空，若设置为 { }，则表示正常词间间距；若设置为 {\newline}，则环境内容开启新行
+%                {⟨定理头格式指定⟩} % 一般留空
+% 定理风格决定着由 \newtheorem 定义的环境的具体格式，有三种定理风格是预定义的，它们分别是：
+% plain: 环境内容使用意大利斜体，环境上下方添加额外间距
+% definition: 环境内容使用罗马正体，环境上下方添加额外间距
+% remark: 环境内容使用罗马正体，环境上下方不添加额外间距
+\theoremstyle{t} % 设置定理风格
+\newtheorem{dyhj}{\color{slv} 定义}[subsection] % 定义定义环境，格式为\newtheorem{⟨环境名⟩}{⟨定理头文本⟩}[⟨上级计数器⟩]或\newtheorem{⟨环境名⟩}[⟨共享计数器⟩]{⟨定理头文本⟩}，其变体\newtheorem*不带编号
+\newtheorem{dlhj}{\color{shuang} 定理}[subsection]
+\newtheorem{lthj}{\color{szi} }
+\newtheorem*{tmhj}{\color{slan} 解}
+\newtheorem*{jiehj}{\color{slan} 解}
+\newtheorem*{zmhj}{\color{slan} 证明}
+\newtheorem*{smhj}{\color{slan} }
+\newenvironment{dy}{\begin{lvse}\begin{dyhj}}{\end{dyhj}\end{lvse}}
+\newenvironment{zm}{\begin{lanse}\begin{zmhj}}{$\hfill \square$\end{zmhj}\end{lanse}}
+\newenvironment{dl}{\begin{huangse}\begin{dlhj}}{\end{dlhj}\end{huangse}}
+\newenvironment{lt}{\begin{zise}\begin{lthj}}{\end{lthj}\end{zise}}
+\newenvironment{tm}{\begin{lanse}\begin{tmhj}}{\end{tmhj}\end{lanse}}
+\newenvironment{sm}{\begin{lanse}\begin{smhj}}{\end{smhj}\end{lanse}}
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+
+% ————————————————————————————————————目录设置————————————————————————————————————
+\setcounter{tocdepth}{4} % 设置在 ToC 的显示的章节深度
+\setcounter{secnumdepth}{3} % 设置章节的编号深度
+% 数值可选选项：-1 part 0 chapter 1 section 2 subsection 3 subsubsection 4 paragraph 5 subparagraph
+\renewcommand{\contentsname}{\bfseries 目\hspace{1em}录}
+% ————————————————————————————————————目录设置————————————————————————————————————
+
+\everymath{\displaystyle} % 设置所有数学公式显示为行间公式的样式
+
+\begin{document}
+
+\quad\\
+{
+\Huge \bfseries 
+\begin{kuang3}
+    \color{hlan}
+    \centering
+    复变函数论第九次作业\\
+    20234544 毛华豪
+\end{kuang3}
+}
+
+\thispagestyle{empty} % 取消这一页的页码
+
+% ————————————————————————————————————页码设置————————————————————————————————————
+% \pagenumbering{Roman}
+% \setcounter{page}{1}
+
+% \begin{multicols}{2} % 设置环境中内容为两栏。数字为栏数
+%     {
+%     \tableofcontents
+%     }
+% \end{multicols}
+
+% \newpage
+% \setcounter{page}{1}
+% \pagenumbering{arabic}
+% ————————————————————————————————————页码设置————————————————————————————————————
+
+% 指令\addcontentsline{toc}{⟨章节层级⟩}{⟨标题名⟩}可将“⟨标题名⟩”加入目录。如为无章节层级的标题，可先用\phantomsection指令添加section分级
+
+% \begin{kuang1}
+%     \part{第一部分的标题}
+% \end{kuang1}
+
+% \begin{kuang2}
+%     \section{第一章的标题}
+% \end{kuang2}
+
+% \begin{kuang3}
+%     \subsection{第一节的标题}
+% \end{kuang3}
+
+%\subsubsection{第一个大标题}
+
+
+% \begin{dy} % 开始定义环境，格式为\begin{⟨环境名⟩}[⟨定理名⟩]
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dy}
+
+% \begin{dl}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dl}
+
+% \begin{lt}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{lt}
+Task1:
+\begin{zm}
+    叙述并证明$Liouville$定理:\\
+    若$f$在复平面$\mathbb{C}$上解析(这种函数称为整函数)且有界，则$f$必为常值函数:\\
+    $Proof:$ $\forall a\in \mathbb{C},\forall R>0$有$f$在$|z-a|<R$上解析，在$|z-a|\le R$上连续，由$Cauchy $估计有:
+    \begin{align*}
+        |f^{n}(a)|\le \frac{n!}{R^{n+1}}\underset{|z-a|=R}{max}|f(z)|,\forall n \ge 0
+    \end{align*}
+    特别地，
+    \begin{align*}
+        \left|f'(z)\right|\le \frac{1}{R}M
+    \end{align*}
+    其中$M>|f(z)|,z\in\mathbb{C}$
+    固定$a$，让$R\to \infty$,
+    \begin{align*}
+        \Rightarrow f'(a)=0
+    \end{align*}
+    由$a$的任意性，$f'(z)\equiv 0,z\in\mathbb{C}$，所以$f(z)\equiv$常数。
+\end{zm}
+Task2:
+\begin{zm}
+    叙述并证明$Morera$定理($Cauchy$积分定理的逆定理)\\
+    若$f$在单连通区域$D$上连续，且对于$D$内任意一条分段光滑的闭曲线都有：
+    \begin{align*}
+        \int_{C}f(z)dz=0
+    \end{align*}
+    则$f$在$D$上解析。\\
+    $Proof:$ 由条件知道$f$在$D$内的曲线积分与路径无关，所以可以定义函数:
+    \begin{align*}
+        F(z)=\int_{z_0}^{z}f(w)dw
+    \end{align*}
+    其中$z_0\in D$为一定点，$z\in D$为一动点，由复变函数对积分路径无关的证明过程可得到：$F$在$D$上解析且$F'(z)=f(z),z\in D$，再由$Cauchy$积分公式的证明知道$F'$在$D$上解析，即$f$在$D$上解析。
+\end{zm}
+Task3：
+\begin{zm}
+    叙述并证明解析函数的平均值定理\\
+    设函数$f$在开圆盘$\{z\in\mathbb{C}:|z-a|<R\}$上解析，在$\{z\in\mathbb{C}:|z-a|\le R\}$上连续，则:
+    \begin{align*}
+        f(a)=\frac{1}{2\pi}\int_{0}^{2\pi}f(a+Re^{i\theta})d\theta
+    \end{align*}
+    $Proof:$ 令$z=a+Re^{i\theta}$，取逆时针方向的圆周，则$\theta:0\to 2\pi$，由$Cauchy$积分公式：
+    \begin{align*}
+        f(a)&=\frac{1}{2\pi i}\int\limits_{|z-a|=R}\frac{f(z)}{z-a}dz\\
+        &=\frac{1}{2\pi i}\int_{0}^{2\pi}\frac{f(a+Re^{i\theta})}{Re^{i\theta}}\cdot Rie^{i\theta}d\theta\\
+        &=\frac{1}{2\pi}\int_{0}^{2\pi}f(a+Re^{i\theta})d\theta
+    \end{align*}
+\end{zm}
+Task4:
+\begin{tm}
+    由柯西积分公式可知:
+    \begin{align*}
+        &f(z)=\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{\xi-z}d\xi\\
+        &f^{n}(z)=\frac{n!}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)^{n+1}}d\xi
+    \end{align*}
+    所以有:
+    \begin{align*}
+        \int_{C}\frac{3w^2+7w+1}{w-z}dw\overset{g(w)=3w^2+7w+1}{=}2\pi ig(z)
+    \end{align*}
+    因为$1+i$在$C$包含区域之内，所以$f(z)=2\pi ig(z)\rightarrow f'(z)=2\pi ig'(z)=2\pi i(6z+7)|_{z=1+i}=2\pi i(13+6i)=-12\pi+26\pi i$
+\end{tm}
+Task5:
+\begin{zm}
+    函数$f(z)$在圆盘$\{z\in\mathbb{C}:|z|\le 1\}$上连续，且对任意的$r\in (0,1)$都有:
+    \begin{align*}
+        \int_{|z|=r}f(z)dz=0
+    \end{align*}
+    由连续的性质可知，$\forall \epsilon>0,\exists \delta>0,\forall z_1,z_2, |z_1-z_2|<\delta\rightarrow |f(z_1)-f(z_2)|<\epsilon$
+    利用变量替换$z=re^{i\theta}$，则积分变为:
+    \begin{align*}
+        \int_{0}^{2\pi}f(re^{i\theta})ire^{i\theta}d\theta=0\\
+        \Rightarrow \int_{0}^{2\pi}f(re^{i\theta})e^{i\theta}d\theta=0
+    \end{align*}
+    因为在闭圆盘上连续，所以一定一致连续，积分和极限可交换，有:
+    \begin{align*}
+        0&=\lim_{r\to 1^-}\int_{0}^{2\pi}f(re^{i\theta})e^{i\theta}d\theta\\
+        &=\int_{0}^{2\pi}\lim_{r\to 1^-}f(re^{i\theta})e^{i\theta}d\theta\\
+        &=\int_{0}^{2\pi}f(e^{i\theta})e^{i\theta}d\theta
+    \end{align*}
+    所以有$\int_{|z|=1}f(z)dz=\int_{0}^{2\pi}f(e^{i\theta})ie^{i\theta}d\theta=0$
+\end{zm}
+Task6:
+\begin{zm}
+    设$f(z)$在$\{z\in\mathbb{C}:|z|<1\}$上解析，并且:
+    \begin{align*}
+        |f(z)|\le \frac{1}{1-|z|},\quad |z|<1.
+    \end{align*}
+    因为$z=0$在这个圆盘内，且函数在圆盘内解析，取一个圆盘$|z|=r<1$，由柯西积分公式可以得到:
+    \begin{align*}
+        f^{n}(z)=\frac{n!}{2\pi i}\int_{|z|=r<1}\frac{f(w)}{(w-z)^{n+1}}dw
+    \end{align*}
+    所以:
+    \begin{align*}
+        f^{n}(0)=\frac{n!}{2\pi i}\int_{|z|=r<1}\frac{f(w)}{w^{n+1}}dw
+    \end{align*}
+    对等式两边同时取模长得到:
+    \begin{align*}
+        \left|f^{n}(0)\right|&=\left|\frac{n!}{2\pi i}\int_{|z|=r<1}\frac{f(w)}{w^{n+1}}dw\right|\\
+        &\le \frac{n!}{2\pi }\int_{|z|=r<1}\frac{|f(w)|}{|w|^{n+1}}\cdot|dw|\\
+        &\le \frac{n!}{2\pi }\int_{|z|=r<1}\frac{1-\frac{1}{|w|}}{|w|^{n+1}}\cdot|dw|\\
+        &=\frac{n!}{(1-r)r^n},\quad 0<r<1.
+    \end{align*}
+    对分母求导可知在$r=\frac{n}{n+1}$时达到最小值，因而函数值达到最大值，所以:
+    \begin{align*}
+        \left|f^{n}(0)\right|=\frac{n!}{(1-r)r^n}=(n+1)!\left(1+\frac{1}{n}\right)^n,\quad n\in\mathbb{N}
+    \end{align*}
+\end{zm}
+Task7:
+\begin{zm}
+    (1):任取$z_0\in D$，存在充分小的$r>0$使得$K\triangleq \{z\in\mathbb{C}:|z-z_0|\le r\}\subset D$。由$Cauchy$积分定理，对于$K$内任意的一条分段光滑的简单封闭曲线$C$有:
+    \begin{align*}
+        \int_{C}f_{n}(z)dz=0,\quad n=1,2\dots
+    \end{align*}
+    每个$f_{n}(z)$都在$K$上连续，且$\sum_{n=1}^{\infty}f_{n}(z)\rightrightarrows f(z)(z\in K)$，则有$f$在$K$上连续。所以:
+    \begin{align*}
+        \int_{C}f(z)dz=\int_{C}\sum_{n=1}^{\infty}f_{n}(z)dz
+    \end{align*}
+    由一致收敛级数的逐项积分定理，原式变为:
+    \begin{align*}
+        \sum_{n=1}^{\infty}\int_{C}f_{n}(z)dz=0
+    \end{align*}
+    由$Morera$定理，$f$在$K$之内解析，特别的$f$在$z_0$点处解析，又因为$z_0$的任意性，$f$在$D$上解析。\\
+    (2):由$Cauchy$积分公式:
+    \begin{align*}
+        f^{k}(z_0)=\frac{k!}{2\pi i}\int\limits_{|z-z_0|=r}\frac{f(z)}{(z-z_0)^{k+1}}dz
+    \end{align*}
+    则对于$n\ge 1$，有:
+    \begin{align*}
+        f^{k}_{n}(z_0)=\frac{k!}{2\pi i}\int\limits_{|z-z_0|=r}\frac{f_{n}(z)}{(z-z_0)^{k+1}}dz
+    \end{align*}
+    其中$|z-z_0|=r$取逆时针方向，由于$\sum_{n=1}^{\infty}f_{n}(z)$在$|z-z_0|=r$上一致收敛于$f(z)$，故:
+    \begin{align*}
+        \sum_{n=1}^{\infty}\frac{f_{n}(z)}{(z-z_0)^{k+1}}\rightrightarrows \frac{f(z)}{(z-z_0)^{k+1}}
+    \end{align*}
+    其中$|z-z_0|=r$，故一方面:
+    \begin{align*}
+        \sum_{n=1}^{\infty}\int\limits_{|z-z_0|=r}\frac{f_{n}(z)}{(z-z_0)^{k+1}}dz=\sum_{n=1}^{\infty}\frac{2\pi i}{k!}f^{k}_{n}(z_0)
+    \end{align*}
+    另一方面:
+    \begin{align*}
+        \sum_{n=1}^{\infty}\int\limits_{|z-z_0|=r}\frac{f_{n}(z)}{(z-z_0)^{k+1}}dz=\int\limits_{|z-z_0|=r}\sum_{n=1}^{\infty}\left(\frac{f_{n}(z)}{(z-z_0)^{k+1}}\right)dz\\
+        =\int\limits_{|z-z_0|=r}\frac{f(z)}{(z-z_0)^{k+1}}dz=\frac{2\pi i}{k!}f^{k}(z_0)
+    \end{align*}
+    所以综上由$z$的任意性有:
+    \begin{align*}
+        f^{(k)}(z)=\sum_{n=1}^{\infty}f_{n}^{(k)}(z),\quad z\in D
+    \end{align*}
+    (3):函数项级数$\sum_{n=1}^{\infty}f^{(k)}_{n}(z)$在$D$上内闭一致收敛于$f^{(k)}(z),k\in\mathbb{N}$，考虑利用柯西积分公式和有限覆盖定理。\\
+    设$K\subset D$为任意的闭集。由于$D$是开集，对于每一个$z_0\in K$，都存在闭圆盘$\{z\in K:|z-z_0|\le r\}\subset D$，由于$K$是有界闭集，所以一定存在有限覆盖，即存在有限个点$z_1,z_2\dots ,z_m$以及它们各自的闭集半径$r_1,r_2\dots,r_m$使得$K$中的所有点都落在某个闭集上，且这些闭集都在$D$内部，取$r=min\{r_1,r_2,\dots,r_m\}$。
+    由柯西估计，对$z\in K$有:
+    \begin{align*}
+        |f_{n}^{(k)}(z)|\le \frac{k!}{r^k}\underset{|w-z|=r}{sup}|f_{n}(w)|
+    \end{align*}
+    由条件可以知道$\sum_{n=1}^{\infty}f_{n}(z)$一致收敛与$f(z)$，所以对于任意的$\epsilon>0,\exists N$使得$\forall m,n>N$有:
+    \begin{align*}
+        \left|\sum_{n=1}^{m}f_{n}(z)\right|<\epsilon 
+    \end{align*}
+    所以有:
+    \begin{align*}
+        \left|\sum_{n=1}^{m}f_{n}^{(k)}(z)\right|\le \frac{k!}{r^k}\epsilon
+    \end{align*}
+    对于所有$z\in K$成立(因为$K$上的所有点一定落在某个半径为$r$的圆上)，而$\epsilon$与$N$无关所以一定一致收敛。
+\end{zm}
+Task8:
+\begin{zm}
+    若整函数$f$满足$Re[f(z)]>0,z\in\mathbb{C}$则$f$恒为常数。\\
+    考虑函数$g(z)=e^{-f(z)}$，若$f(z)=u(x)+iv(x)$则有:
+    \begin{align*}
+        |g(z)|=\left|e^{-f(z)}\right|=e^{-u(z)}.
+    \end{align*}
+    因为$Re[f(z)]>0\rightarrow u(x)>0\rightarrow e^{-u(z)}<e^0=1$，所以函数$g(z)$有界，又因为$f(z)$是整函数，所以$g(z)$也是整函数，所以由$Liouville$定理，函数$g(z)$一定是一个常值函数，所以$f(z)$也是一个常值函数。
+\end{zm}
+Task9:
+\begin{zm}
+    首先计算积分:
+    \begin{align*}
+        &\int_{|z|=1}\left(z+\frac{1}{z}\right)^{2n}\frac{dz}{z}\\
+        &=\int_{|z|=1}\left(z^{2}+1\right)^{2n}\frac{dz}{z^{2n+1}}
+    \end{align*}
+    因为函数$f(z)=(z^{2}+1)^{2n}$在圆盘$|z|=1$上解析，所以由柯西积分公式可得，原积分为$f^{2n}(0)=2\pi iC_{2n}^{n}$\\
+    接下来对积分变量做变量替换，找到和三角函数有关的关系，考虑$|z|=1$上的点可以用$z=e^{i\theta}=\cos\theta+i\sin\theta$来表示，则$\frac{1}{z}=\cos\theta-i\sin\theta$。所以原积分可以表示为:
+    \begin{align*}
+        \int_{0}^{2\pi}(2\cos\theta)^{2n}id\theta=2\pi iC_{2n}^{n}\\
+        \Rightarrow \int_{0}^{2\pi}\cos^{2n}\theta\space d\theta=2\pi \frac{C_{2n}^{n}}{4^n}
+    \end{align*}
+    因为$\frac{(2n-1)!!}{(2n)!!}=\frac{(2n-1)!!(2n)!!}{[(2n)!!]^2}=\frac{2n!}{(2^n\cdot n!)^2}=\frac{C_{2n}^{n}}{4^n}$.所以:
+    \begin{align*}
+        \int_{0}^{2\pi}\cos^{2n}\theta\space d\theta=2\pi \frac{(2n-1)!!}{(2n)!!},\quad n=1,2,\dots
+    \end{align*}
+\end{zm}
+Task10:
+\begin{zm}
+    因为积分曲线$|z|=R$并且$|a|<R$，所以转换原积分为:
+    \begin{align*}
+        &\frac{1}{2\pi i}\int_{|z|=R}\frac{z-a}{z+a}\frac{dz}{z}\\
+        &\Rightarrow \frac{1}{2\pi i}\int_{|z|=R}\left(\frac{2}{(z+a)}-\frac{1}{z}\right)dz
+    \end{align*}
+    由柯西积分公式可得原积分为1.\\
+    在考虑积分变换$z=Re^{i\theta}\rightarrow \frac{dz}{z}=id\theta$，所以:
+    \begin{align*}
+        1&=\frac{1}{2\pi i}\int_{|z|=R}\frac{z-a}{z+a}\frac{dz}{z}\\
+        &=\frac{1}{2\pi i}\int_{0}^{2\pi}\frac{(z-a)(\bar{z}+\bar{a})}{(z+a)(\bar{z}+\bar{a})}id\theta\\
+        &=\frac{1}{2\pi}\int_{0}^{2\pi}\frac{R^2-|a|^2+\bar{a}z-\bar{z}a}{|z+a|^2}d\theta
+    \end{align*}
+    因为$\bar{a}z-\bar{z}a$一定是一个纯虚数，所以我们有:
+    \begin{align*}
+        &\frac{1}{2\pi}\int_{0}^{2\pi}\frac{R^2-|a|^2}{|z+a|^2}d\theta=1\\
+        &\frac{1}{2\pi}\int_{0}^{2\pi}\frac{\bar{a}z-\bar{z}a}{|z+a|^2}d\theta=0
+    \end{align*}
+\end{zm}
+\end{document}
