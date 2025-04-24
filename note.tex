@@ -1,0 +1,519 @@
+\documentclass{ctexart}
+\usepackage{paracol}
+\usepackage{newtxtext, geometry, amsmath, amssymb,yhmath}
+\usepackage{graphicx}
+\usepackage{amsthm} % 设置定理环境，要在amsmath后用
+\usepackage{xpatch} % 用于去除amsthm定义的编号后面的点
+\usepackage[strict]{changepage} % 提供一个 adjustwidth 环境
+\usepackage{multicol} % 用于分栏
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings}
+\usepackage[fontsize=14pt]{fontsize} % 字号设置
+\usepackage{esvect} % 实现向量箭头输入（显示效果好于\vec{}和\overrightarrow{}），格式为\vv{⟨向量符号⟩}或\vv*{⟨向量符号⟩}{⟨下标⟩} 
+\usepackage[
+            colorlinks, % 超链接以颜色来标识，而并非使用默认的方框来标识
+            linkcolor=mlv,
+            anchorcolor=mlv,
+            citecolor=mlv % 设置各种超链接的颜色
+            ]
+            {hyperref} % 实现引用超链接功能
+\usepackage{tcolorbox} % 盒子效果
+\tcbuselibrary{most} % tcolorbox宏包的设置，详见宏包说明文档
+\tcbuselibrary{breakable=forced}
+\geometry{a4paper,centering,scale=0.8}
+
+% ————————————————————————————————————自定义符号————————————————————————————————————
+\newcommand{\。}{．} % 示例：将指令\。定义为全角句点。
+\newcommand{\zte}{\mathrm{e}} % 正体e
+\newcommand{\ztd}{\mathrm{d}} % 正体d
+\newcommand{\zti}{\mathrm{i}} % 正体i
+\newcommand{\ztj}{\mathrm{j}} % 正体j
+\newcommand{\ztk}{\mathrm{k}} % 正体k
+\newcommand{\CC}{\mathbb{C}} % 黑板粗体C
+\newcommand{\QQ}{\mathbb{Q}} % 黑板粗体Q
+\newcommand{\RR}{\mathbb{R}} % 黑板粗体R
+\newcommand{\ZZ}{\mathbb{Z}} % 黑板粗体Z
+\newcommand{\NN}{\mathbb{N}} % 黑板粗体N
+% ————————————————————————————————————自定义符号————————————————————————————————————
+
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+\definecolor{mlv}{RGB}{40, 137, 124} % 墨绿
+\definecolor{qlv}{RGB}{240, 251, 248} % 浅绿
+\definecolor{slv}{RGB}{33, 96, 92} % 深绿
+\definecolor{qlan}{RGB}{239, 249, 251} % 浅蓝
+\definecolor{slan}{RGB}{3, 92, 127} % 深蓝
+\definecolor{hlan}{RGB}{82, 137, 168} % 灰蓝
+\definecolor{qhuang}{RGB}{246, 250, 235} % 浅黄
+\definecolor{shuang}{RGB}{77, 82, 59} % 深黄
+\definecolor{qzi}{RGB}{240, 243, 252} % 浅紫
+\definecolor{szi}{RGB}{49, 55, 70} % 深紫
+% 将RGB换为rgb，颜色数值取值范围改为0到1
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+
+% ————————————————————————————————————盒子设置————————————————————————————————————
+% tolorbox提供了tcolorbox环境，其格式如下：
+% 第一种格式：\begin{tcolorbox}[colback=⟨背景色⟩, colframe=⟨框线色⟩, arc=⟨转角弧度半径⟩, boxrule=⟨框线粗⟩]   \end{tcolorbox}
+% 其中设置arc=0mm可得到直角；boxrule可换为toprule/bottomrule/leftrule/rightrule可分别设置对应边宽度，但是设置为0mm时仍有细边，若要绘制单边框线推荐使用第二种格式
+% 方括号内加上title=⟨标题⟩, titlerule=⟨标题背景线粗⟩, colbacktitle=⟨标题背景线色⟩可为盒子加上标题及其背景线
+\newenvironment{kuang1}{
+    \begin{tcolorbox}[breakable,colback=hlan, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+\newenvironment{kuang2}{
+    \begin{tcolorbox}[breakable,colback=hlan!5!white, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+% 第二种格式：\begin{tcolorbox}[enhanced, colback=⟨背景色⟩, boxrule=0pt, frame hidden, borderline={⟨框线粗⟩}{⟨偏移量⟩}{⟨框线色⟩}]   {\end{tcolorbox}}
+% 将borderline换为borderline east/borderline west/borderline north/borderline south可分别为四边添加框线，同一边可以添加多条
+% 偏移量为正值时，框线向盒子内部移动相应距离，负值反之
+\newenvironment{kuang3}{
+    \begin{tcolorbox}[breakable,enhanced, colback=hlan!5!white, boxrule=0pt, frame hidden,
+        borderline south={0.5mm}{0.1mm}{hlan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lvse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlv, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slv}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lanse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlan, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{huangse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qhuang, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{shuang}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{zise}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qzi, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{szi}]
+    }
+    {\end{tcolorbox}}
+% tcolorbox宏包还提供了\tcbox指令，用于生成行内盒子，可制作高光效果
+\newcommand{\hl}[1]{
+    \tcbox[on line, arc=0pt, colback=hlan!5!white, colframe=hlan!5!white, boxsep=1pt, left=1pt, right=1pt, top=1.5pt, bottom=1.5pt, boxrule=0pt]
+{\bfseries \color{hlan}#1}}
+% 其中on line将盒子放置在本行（缺失会跳到下一行），boxsep用于控制文本内容和边框的距离，left、right、top、bottom则分别在boxsep的参数的基础上分别控制四边距离
+% ————————————————————————————————————盒子设置————————————————————————————————————
+
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+\setCJKfamilyfont{xbsong}{方正小标宋简体}
+\newcommand{\xbsong}{\CJKfamily{xbsong}}
+% CTeX宏集还预定义了\songti、\heiti、\fangsong、\kaishu、\lishu、\youyuan、\yahei、\pingfang等字体命令
+% 由于未知原因，一些设备可能无法调用这些字体，故此文档暂时未使用
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+\ctexset{
+    % 修改 section。
+    section={   
+    % 设置标题编号前后的词语，使用name={⟨前部分⟩,⟨后部分⟩}参数进行设置。    
+        name={\textbf{第},\textbf{章}\hspace{18pt}},
+    % 使用number参数设置标题编号，\arabic设置为阿拉伯数字，\chinese设置为中文，\roman设置为小写罗马字母，\Roman设置为大写罗马字母，\alph设置为小写英文，\Alph设置为大写英文。
+        number={\textbf{\chinese{section}}},
+    % 参数format设置标题整体的样式。包括标题主题、编号以及编号前后的词语。
+    % 参数format还可以设置标题的对齐方式。居中对齐\centering，左对齐\raggedright，右对齐\hfill
+        format=\color{hlan}\centering\zihao{2}, % 设置 section 标题为正蓝色、黑体、居中对齐、小二号字
+    % 取消编号后的空白。编号后有一段空白，参数aftername=\hspace{0pt}可以用来控制编号与标题之间的距离。
+        aftername={}
+    },
+    % 修改 subsection。
+    subsection={   
+        name={\S \hspace{6pt}, \hspace{8pt}},
+        number={\arabic{section}.\arabic{subsection}},
+        format=\color{hlan}\centering\zihao{-2}, % 设置 subsection 标题为黑体、三号字
+        aftername=\hspace{0pt}
+    },
+    subsubsection={   
+        name={,、},
+        number={\chinese{subsubsection}},
+        format=\raggedright\color{hlan}\zihao{3},
+        aftername=\hspace{0pt}
+    },
+    part={   
+        name={第,部分},
+        number={\chinese{part}},
+        format=\color{white}\centering\bfseries\zihao{-1},
+        aftername=\hspace{1em}
+    }
+}
+% 各个标题设置的各行结尾一定要记得写逗号！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+\newtheoremstyle{t}{0pt}{}{}{\parindent}{\bfseries}{}{1em}{} % 定义新定理风格。格式如下：
+%\newtheoremstyle{⟨风格名⟩}
+%                {⟨上方间距⟩} % 若留空，则使用默认值
+%                {⟨下方间距⟩} % 若留空，则使用默认值
+%                {⟨主体字体⟩} % 如 \itshape
+%                {⟨缩进长度⟩} % 若留空，则无缩进；可以使用 \parindent 进行正常段落缩进
+%                {⟨定理头字体⟩} % 如 \bfseries
+%                {⟨定理头后的标点符号⟩} % 如点号、冒号
+%                {⟨定理头后的间距⟩} % 不可留空，若设置为 { }，则表示正常词间间距；若设置为 {\newline}，则环境内容开启新行
+%                {⟨定理头格式指定⟩} % 一般留空
+% 定理风格决定着由 \newtheorem 定义的环境的具体格式，有三种定理风格是预定义的，它们分别是：
+% plain: 环境内容使用意大利斜体，环境上下方添加额外间距
+% definition: 环境内容使用罗马正体，环境上下方添加额外间距
+% remark: 环境内容使用罗马正体，环境上下方不添加额外间距
+\theoremstyle{t} % 设置定理风格
+\newtheorem{dyhj}{\color{slv} 定义}[subsection] % 定义定义环境，格式为\newtheorem{⟨环境名⟩}{⟨定理头文本⟩}[⟨上级计数器⟩]或\newtheorem{⟨环境名⟩}[⟨共享计数器⟩]{⟨定理头文本⟩}，其变体\newtheorem*不带编号
+\newtheorem{dlhj}{\color{shuang} 定理}[subsection]
+\newtheorem{lthj}{\color{szi} }
+\newtheorem*{tmhj}{\color{slan} 解}
+\newtheorem*{jiehj}{\color{slan} 解}
+\newtheorem*{zmhj}{\color{slan} 证明}
+\newtheorem*{smhj}{\color{slan} }
+\newenvironment{dy}{\begin{lvse}\begin{dyhj}}{\end{dyhj}\end{lvse}}
+\newenvironment{zm}{\begin{lanse}\begin{zmhj}}{$\hfill \square$\end{zmhj}\end{lanse}}
+\newenvironment{dl}{\begin{huangse}\begin{dlhj}}{\end{dlhj}\end{huangse}}
+\newenvironment{lt}{\begin{zise}\begin{lthj}}{\end{lthj}\end{zise}}
+\newenvironment{tm}{\begin{lanse}\begin{tmhj}}{\end{tmhj}\end{lanse}}
+\newenvironment{sm}{\begin{lanse}\begin{smhj}}{\end{smhj}\end{lanse}}
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+
+% ————————————————————————————————————目录设置————————————————————————————————————
+\setcounter{tocdepth}{4} % 设置在 ToC 的显示的章节深度
+\setcounter{secnumdepth}{3} % 设置章节的编号深度
+% 数值可选选项：-1 part 0 chapter 1 section 2 subsection 3 subsubsection 4 paragraph 5 subparagraph
+\renewcommand{\contentsname}{\bfseries 目\hspace{1em}录}
+% ————————————————————————————————————目录设置————————————————————————————————————
+
+\everymath{\displaystyle} % 设置所有数学公式显示为行间公式的样式
+
+\begin{document}
+
+\quad\\
+{
+\Huge \bfseries 
+\begin{kuang3}
+    \color{hlan}
+    \centering
+    复变函数论第八次作业\\
+    20234544 毛华豪
+\end{kuang3}
+}
+
+\thispagestyle{empty} % 取消这一页的页码
+
+% ————————————————————————————————————页码设置————————————————————————————————————
+% \pagenumbering{Roman}
+% \setcounter{page}{1}
+
+% \begin{multicols}{2} % 设置环境中内容为两栏。数字为栏数
+%     {
+%     \tableofcontents
+%     }
+% \end{multicols}
+
+% \newpage
+% \setcounter{page}{1}
+% \pagenumbering{arabic}
+% ————————————————————————————————————页码设置————————————————————————————————————
+
+% 指令\addcontentsline{toc}{⟨章节层级⟩}{⟨标题名⟩}可将“⟨标题名⟩”加入目录。如为无章节层级的标题，可先用\phantomsection指令添加section分级
+
+% \begin{kuang1}
+%     \part{第一部分的标题}
+% \end{kuang1}
+
+% \begin{kuang2}
+%     \section{第一章的标题}
+% \end{kuang2}
+
+% \begin{kuang3}
+%     \subsection{第一节的标题}
+% \end{kuang3}
+
+%\subsubsection{第一个大标题}
+
+
+% \begin{dy} % 开始定义环境，格式为\begin{⟨环境名⟩}[⟨定理名⟩]
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dy}
+
+% \begin{dl}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dl}
+
+% \begin{lt}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{lt}
+Task1:
+\begin{zm}
+    这里仅仅需要证明不等式，所以考虑放缩相应的值。设$f(z)=x^2+iy^2$由于:
+    \begin{align*}
+        \left|\int_{L}^{}f(z)dz\right|\le \int_{L}^{}|f(z)||dz|
+    \end{align*}
+    而:
+    \begin{align*}
+        |f(z)|=|x^2+iy^2|=\sqrt{x^4+y^4}\xrightarrow{x=0}\sqrt{y^4}=|y^2|\le 1
+    \end{align*}
+    并且有：
+    \begin{align*}
+        |dz|=ds
+    \end{align*}
+    所以有:
+    \begin{align*}
+        \left|\int_{L}^{}f(z)dz\right|\le \int_{L}^{}|f(z)||dz|\\
+        \le 1\cdot \int_{-1}^{1}ds=1\cdot 2=2
+    \end{align*}
+\end{zm}
+Task2:
+\begin{zm}
+    同Task1的思路有:
+    \begin{align*}
+        \left|\int_{L}^{}\frac{dz}{z^2}\right|\le \int_{L}^{}\left|\frac{1}{z^2}\right||dz|
+    \end{align*}
+    由于:
+    \begin{align*}
+        \left|\frac{1}{z^2}\right|=\frac{1}{|z|^2}\le 1
+    \end{align*}
+    并且有：
+    \begin{align*}
+        |dz|=ds
+    \end{align*}
+    所以有:
+    \begin{align*}
+        \left|\int_{L}^{}\frac{dz}{z^2}\right|\le \int_{L}^{}\left|\frac{1}{z^2}\right||dz|\\
+        \le 1\cdot \int_{L}ds=1\cdot 1=1\le 2
+    \end{align*}
+\end{zm}
+Task3:
+\begin{zm}
+    由于原点是奇点所以在此处无法使用柯西积分定理，考虑:
+    \begin{align*}
+        2\pi f(0)=\int_{0}^{2\pi}f(0)d\theta
+    \end{align*}
+    则即证明:
+    \begin{align*}
+        \lim_{r\to 0^+}\int_{0}^{2\pi}f(re^{i\theta})-f(0)d\theta=0
+    \end{align*}
+    由于函数在原点处解析所以，点$z=re^{i\theta}$即原点外半径为$r$的圆上的点，可以得到存在原点处的导数$f'(0)$使得:
+    \begin{align*}
+        \lim_{r\to 0^+}\frac{f(re^{i\theta})-f(0)}{re^{i\theta}}=f'(0)
+    \end{align*}
+    由于:
+    \begin{align*}
+        \lim_{r\to 0^+}\int_{0}^{2\pi}re^{i\theta}f'(0)d\theta=\lim_{r\to 0^+}r\cdot f'(0)\cdot \int_{0}^{2\pi}e^{i\theta}d\theta=0
+    \end{align*}
+    所以$\lim_{r\to 0^+}\int_{0}^{2\pi}f(re^{i\theta})-f(0)d\theta=0$成立。
+\end{zm}
+Task4:
+\begin{tm}
+    利用$Cauchy$积分定理证明复积分：\\
+(1)对于积分$\int_{|z|=1}^{}\frac{dz}{z^2+2}$，由于函数$f(z)=\frac{1}{z^2+2}$的奇点为$z=\pm \sqrt{2}i$处于圆周$|z|=1$之外，所以由柯西积分定理：$\int_{|z|=1}^{}\frac{dz}{z^2+2}=0$\\
+(2)对于积分$\int_{|z|=2}^{}\frac{dz}{z^2+2}$，由于函数$f(z)=\frac{1}{z^2+2}$的奇点在圆周$C:|z|=2$之内，考虑两个小圆周$C_1:|z-\sqrt{2}i|=r$以及$C_2:|z+\sqrt{2}i|=r$，方向均取逆时针为正方向，则函数在$C\cup C_1^-\cup C_2^-$所围成的多连通区域上是解析的，由柯西积分定理原积分：
+\begin{align*}
+    &\int_{C}^{}\frac{dz}{z^2+2}=\int_{C\cup C_1^-\cup C_2^-\cup C_1^+\cup C_2^+}^{}\frac{dz}{z^2+2}\\
+    &=\int_{C\cup C_1^-\cup C_2^-}^{}\frac{dz}{z^2+2}+\int_{C_1^+}^{}\frac{dz}{z^2+2}+\int_{C_2^+}^{}\frac{dz}{z^2+2}\\
+    &=0+\int_{C_1^+}^{}\frac{dz}{z^2+2}+\int_{C_2^+}^{}\frac{dz}{z^2+2}
+\end{align*}
+由于:
+\begin{align*}
+    &\int_{|z-a|=r}^{}\frac{dz}{z^2-a^2}\\
+    &=\frac{1}{2a}\left(\int_{|z-a|=r}^{}\frac{dz}{z-a}-\int_{|z-a|=r}^{}\frac{dz}{z+a}\right)\\
+    &=\frac{1}{2a}\left(2\pi i-0\right)=\frac{\pi i}{a}
+\end{align*}
+所以原积分为：
+\begin{align*}
+    0+\int_{C_1^+}^{}\frac{dz}{z^2+2}+\int_{C_2^+}^{}\frac{dz}{z^2+2}\\
+    =0+\frac{\pi i}{\sqrt{2}i}+\frac{\pi i}{-\sqrt{2}i}=0
+\end{align*}
+(3)对于积分$\int_{|z|=1}^{}\frac{dz}{(2z+1)(z-2)}$，由于圆周$C:|z|=1$之内包含函数$g(z)=\frac{1}{(2z-1)(z-2)}$的奇点$z=-\frac{1}{2}$，所以考虑一个小圆周$C':|z+\frac{1}{2}|=r$，方向为逆时针，则同(2)，原积分可以变为：
+\begin{align*}
+    \int_{|z|=1}^{}\frac{1}{5}\left(\frac{1}{z-2}-\frac{2}{2z+1}\right)dz\\
+    =-\frac{1}{5}\int_{C'^+}^{}\left(\frac{2}{2z+1}\right)dz=-\frac{2\pi i}{5}
+\end{align*}
+\end{tm}
+Task5:
+\begin{zm}
+    要求证明柯西积分公式：\\
+    定义函数$F(\xi)=\frac{f(\xi)}{\xi-z}$,其中$z\in D$为一定点，作为$\xi$的函数，$F$在$D$上除了$\xi=z$点之外都解析。以$z$为中心，充分小的$\rho>0$为半径做一个顺时针方向的圆周$\gamma_\rho:|\xi-z|=\rho$，使得
+    $\gamma_\rho$在$C_0^+$之内，在其余的$C_k^-$之外。令$\Gamma=C\cup \gamma_\rho=C_0+\cup C_1^-\cup C_2^-\cup \dots \cup C_n^-\cup \gamma_\rho^-$，记$\Gamma$围成的区域为$D'$，则$F$在$D'$上解析，且在$\Gamma\cup D'$上连续，对
+    $F$在$D'$上应用柯西积分定理有:
+    \begin{align*}
+        &0=\int_{\Gamma}^{}F(\xi)d\xi=\int_{\Gamma}^{}\frac{f(\xi)}{\xi-z}d\xi\\
+        &=\left(\int_{C_0^+}+\int_{C_1^-}+\dots +\int_{C_n^-}+\int_{\gamma_\rho^-}\right)F(\xi)d\xi\\
+        &=\left(\int_{C}-\int_{\gamma_\rho^+}\right)F(\xi)d\xi
+    \end{align*}
+    所以可以得到：
+    \begin{align*}
+        \int_{C}\frac{f(\xi)}{\xi-z}d\xi=\int_{\gamma_\rho^+}\frac{f(\xi)}{\xi-z}d\xi
+    \end{align*}
+    由于:
+    \begin{align*}
+        \int_{\gamma_\rho^+}\frac{1}{\xi-z}d\xi=\int_{|\xi-z|=\rho}\frac{1}{\xi-z}d\xi=2\pi i
+    \end{align*}
+    故：
+    \begin{align*}
+        f(z)=\frac{1}{2\pi i}\int_{\gamma_\rho^+}\frac{f(z)}{\xi-z}d\xi
+    \end{align*}
+    故我们所需要证明的第一个等式即：
+    \begin{align*}
+        \int_{\gamma_\rho^+}\frac{f(z)}{\xi-z}d\xi=\int_{\gamma_\rho^+}\frac{f(\xi)}{\xi-z}d\xi
+    \end{align*}
+    考虑做差求解。事实上：
+    \begin{align*}
+        \left|\int_{\gamma_\rho^+}\frac{f(\xi)-f(z)}{\xi-z}d\xi\right|\le \int_{\gamma_\rho^+}\frac{|f(\xi)-f(z)|}{|\xi-z|}|d\xi|
+    \end{align*}
+    由于$f$在$D\cup C$上连续，即在一个闭的区域上连续，因而一直连续，故:
+    \begin{align*}
+        &\qquad \forall \epsilon>0, \exists \delta=\delta(\epsilon)>0,\quad s.t.\\
+        &|w-z|<\delta (w,z\in\overline{D})\Rightarrow \left|f(w)-f(z)\right|<\epsilon.
+    \end{align*}
+    所以当$\rho<\delta$时，有$|\xi-z|=\rho<\delta\Rightarrow |f(\xi)-f(z)|<\epsilon$，所以：
+    \begin{align*}
+        \int_{\gamma_\rho^+}\left|\frac{f(\xi)-f(z)}{\xi-z}\right|\cdot |d\xi|\le \int_{\gamma_\rho^+}\frac{\epsilon}{\rho}|d\xi|\\
+        =\frac{\epsilon}{\rho}\int_{\gamma_\rho^+}|d\xi|=\frac{\epsilon}{\rho}\cdot 2\pi \rho=2\pi \epsilon
+        \end{align*}
+    所以原积分为：
+    \begin{align*}
+        \left|\int_{\gamma_\rho^+}\frac{f(z)}{\xi-z}d\xi-\int_{\gamma_\rho^+}\frac{f(\xi)}{\xi-z}d\xi\right|\le 2\pi \epsilon\to 0(\epsilon\to 0^+)
+    \end{align*}
+    故而:
+    \begin{align}
+        f(z)=\frac{1}{2\pi i}\int_{\gamma_\rho^+}\frac{f(\xi)}{\xi-z}d\xi=\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{\xi-z}d\xi,\quad z\in D
+    \end{align}
+    下一步证明：$f$在$D$上内的各阶导数满足:
+    \begin{align}
+        f^(n)(z)=\frac{n!}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)^{n+1}}d\xi,\quad z\in D,n\in\mathbb{N}
+    \end{align}
+    当$n=1$时，即证明:
+    \begin{align*}
+        f'(z)=\frac{1}{2\pi i}\int_{C}^{}\frac{f(\xi)}{(\xi-z)^2}d\xi,z\in D
+    \end{align*}
+    我们有:
+    \begin{align*}
+        f'(z)=\lim_{\Delta z\to 0}\frac{f(z+\Delta z)-f(z)}{\Delta z}
+    \end{align*}
+    当$\Delta z$足够小时，我们有:
+    \begin{itemize}
+        \item $|\Delta z|>0$
+        \item $(z+\Delta z)\in D$
+    \end{itemize}
+    有上一步的结论可知:
+    \begin{align*}
+        &\begin{cases}
+            f(z)=\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{\xi-z}d\xi,\\
+            f(z+\Delta z)=\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{\xi-(z+\Delta z)}d\xi
+        \end{cases}\\
+        &\Rightarrow \left|\frac{f(z+\Delta z)-f(z)}{\Delta z}\right|=\left|\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)(\xi-z-\Delta z)}\right|\\
+        &\le \frac{1}{2\pi}\left|\int_{C}\frac{|f(\xi)|\cdot |d\xi|}{|\xi-z|\cdot |\xi-z-\Delta z|}\right|
+    \end{align*}
+    由于$f$在$C$上连续，所以：
+    \begin{align*}
+        \exists M>0\space s.t.\space |f(\xi)|\le M,\forall \xi\in C.
+    \end{align*}
+    另外，$z$在开集$D$之内，故$z$到$D$的边界上的点$\xi$的最小距离$d>0$即:
+    \begin{align*}
+        0<d=\underset{\xi\in C}{inf}|\xi-z|=\underset{\xi\in C}{min}|\xi-z|
+    \end{align*}
+    所有有:
+    \begin{align*}
+       \begin{cases}
+        |\xi-z|\ge d,\forall \xi\in C;\\
+        |\xi-z-\Delta z|\ge |\xi-z|-|\Delta z|\\
+        \ge d-|\Delta z|\overset{|\Delta z|<\frac{d}{2}}{\ge} d-\frac{d}{2}=\frac{d}{2}
+       \end{cases}
+    \end{align*}
+    所有当$|\Delta z|<\frac{d}{2}$时，有:
+    \begin{align*}
+        &\left|\frac{f(z+\Delta z)-f(z)}{\Delta z}-\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)^2}d\xi\right|\\
+        &=\left|\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)(\xi-z-\Delta z)}-\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)^2}d\xi\right|\\
+        &=\frac{1}{2\pi}\int_{C}\frac{|\Delta z|\cdot |f(\xi)|}{|(\xi-z)^2(\xi-z-\Delta z)|}d\xi\le \frac{M}{2\pi}\int_{C}\frac{|\Delta z|}{d^2\times \frac{d}{2}}|d\xi|\\
+        &=\frac{M}{\pi d^3}|\Delta z|\cdot L
+    \end{align*}
+    其中$L$为$C$的弧长。所有当$\Delta z\to 0$时$|f'(z)-\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)^2}d\xi|\le 0$，所以$n=1$时，结论成立，有了$f'(z)$之后，重复上面的讨论即得到对任意的$n\ge 1$结论成立
+\end{zm}
+Task6:
+\begin{tm}
+$C$为逆时针方向的圆周$|z|=2$求积分：
+(1):对于积分$\int_{C}\frac{dz}{\cos(\frac{z}{2})}=\int_{C}\frac{\frac{z}{\cos \frac{z}{2}}dz}{z-0}$，因为函数$f(z)=\frac{z}{\cos \frac{z}{2}}$在圆盘$|z|<2$内部解析，且在$|z|\le 2$上连续，所以由柯西积分公式:
+\begin{align*}
+    \frac{1}{2\pi i}\int_{C}\frac{f(z)}{(z-0)}dz=f(0)=\frac{0}{\cos 0}=0
+\end{align*}
+所以原积分值为$0$
+(2):对于积分$\int_{C}\frac{e^{\sin z}}{100z^2=1}dz=\int_{C}\frac{e^{\sin z}}{(10z+i)(10z-i)}=\frac{1}{20i}\int_{C}(\frac{e^{\sin z}}{z-\frac{i}{10}}-\frac{e^{\sin z}}{z+\frac{i}{10}})$，由于$f(z)=e^{\sin z}$在$C$的内部$|z|<2$解析，在$|z|\le 2$上连续，所以由柯西积分公式，原积分变为:
+\begin{align*}
+    \frac{1}{20i}\cdot 2\pi i\cdot (f(\frac{i}{10})-f(-\frac{i}{10}))=\frac{\pi}{5}\cdot \left(\frac{e^{\sin \frac{i}{10}}-e^{-\sin \frac{i}{10}}}{2}\right)
+\end{align*}
+因为:
+\begin{align*}
+    \sin\frac{i}{10}=\frac{e^{-\frac{1}{10}}-e^{\frac{1}{10}}}{2i}\\
+    \sin\frac{-i}{10}=\frac{e^{\frac{1}{10}}-e^{-\frac{1}{10}}}{2i}\\
+    \Rightarrow e^{\sin\frac{i}{10}}=e^{\frac{e^{\frac{1}{10}}-e^{-\frac{1}{10}}}{2}i}\\
+    \overset{a=\frac{e^{\frac{1}{10}}-e^{-\frac{1}{10}}}{2}}{\Rightarrow}\cos a+i\sin a
+\end{align*}
+同理$e^{\sin\frac{i}{10}}=\cos a-i\sin a$
+所以原积分为：
+\begin{align*}
+    \frac{\pi}{5}i\sin a=\frac{\pi}{5}i\sin\left(\sinh \left(\frac{1}{10}\right)\right)
+\end{align*}
+\end{tm}
+Task7:
+\begin{tm}
+利用柯西积分公式求解复积分:
+\begin{align*}
+    \int_{C_j}\frac{\sin\left(\frac{\pi}{4}z\right)}{z^2-1}dz,\quad j=1,2,3
+\end{align*}
+(j=1):$C_1:|z+1|=\frac{1}{2}$，函数$f(z)=\frac{\sin\left(\frac{\pi}{4}z\right)}{z^2-1}$有奇点$z=\pm 1$。\\
+原积分变为:
+\begin{align*}
+    \frac{1}{2}\cdot \int_{C_1}\left(\frac{\sin\left(\frac{\pi}{4}z\right)}{z-1}-\frac{\sin\left(\frac{\pi}{4}z\right)}{z+1}\right)dz
+\end{align*}
+由柯西积分定理，前一项为0，所以原积分为:
+\begin{align*}
+    -\frac{1}{2}\cdot \int_{C_1}\frac{\sin\left(\frac{\pi}{4}z\right)}{z+1}dz
+\end{align*}
+由于函数$g(z)=\sin\frac{\pi}{4}z$在$C_1$内部$D$解析，且在$C_1\cup D$上连续，所以由柯西积分公式，原积分变为:
+\begin{align*}
+    -\frac{1}{2}\cdot 2\pi i\cdot \sin\frac{-1\cdot \pi}{4}=\frac{\sqrt{2}}{2}\pi i
+\end{align*}
+(j=2):$C_2:|z-1|=\frac{1}{2}$，类似(j=1)分解可以得到原积分为:
+\begin{align*}
+    \frac{1}{2}\cdot \int_{C_2}\frac{\sin\left(\frac{\pi}{4}z\right)}{z-1}dz=\frac{1}{2}\cdot 2\pi i\cdot \sin\frac{\pi}{4}=\frac{\sqrt{2}}{2}\pi i
+\end{align*}
+(j=3):$C_3:|z|=4$则此时两个奇点都在$C_3$的内部。考虑$C_1,C_2$，则原积分变为:
+\begin{align*}
+    &\frac{1}{2}\cdot \int_{C_3\cup C_1^-\cup C_2^-\cup C_1^+\cup C_2^+}\left(\frac{\sin\left(\frac{\pi}{4}z\right)}{z-1}-\frac{\sin\left(\frac{\pi}{4}z\right)}{z+1}\right)dz\\
+    &=\frac{1}{2}\cdot \int_{C_3\cup C_1^-\cup C_2^-}\left(\frac{\sin\left(\frac{\pi}{4}z\right)}{z-1}-\frac{\sin\left(\frac{\pi}{4}z\right)}{z+1}\right)dz\\
+    &+\frac{1}{2}\cdot \int_{C_1^+\cup C_2^+}\left(\frac{\sin\left(\frac{\pi}{4}z\right)}{z-1}-\frac{\sin\left(\frac{\pi}{4}z\right)}{z+1}\right)dz
+\end{align*}
+由于函数$\left(\frac{\sin\left(\frac{\pi}{4}z\right)}{z-1}-\frac{\sin\left(\frac{\pi}{4}z\right)}{z+1}\right)$在$C_3\cup C_1^-\cup C_2^-$所包含的区域内解析，有柯西积分定理原积分变为:
+\begin{align*}
+    0+\frac{1}{2}\cdot\int_{C_1^+\cup C_2^+}\left(\frac{\sin\left(\frac{\pi}{4}z\right)}{z-1}-\frac{\sin\left(\frac{\pi}{4}z\right)}{z+1}\right)dz=\sqrt{2}\pi i
+\end{align*}
+\end{tm}
+Task8:
+\begin{zm}
+    函数$f(z)=e^z$在$C:|z|=1$内部$D$解析，且在$D\cup C$上连续，所以由柯西积分公式：
+    \begin{align*}
+        \int_{|z|=1}\frac{e^z}{z}dz=\int_{C}\frac{e^z}{z-0}dz=2\pi i\cdot f(0)=2\pi i
+    \end{align*}
+    令$z=e^{i\theta},dz=ie^{i\theta}d\theta$则原积分变为:
+    \begin{align*}
+        &\int_{0}^{2\pi}\frac{e^{e^{i\theta}}}{e^{i\theta}}\cdot ie^{i\theta}d\theta=2\pi i\\
+        &\Rightarrow \int_{0}^{2\pi}e^{\cos \theta+i\sin\theta}=2\pi\\
+        &\Rightarrow \int_{0}^{2\pi}e^{\cos \theta}e^{i\sin\theta}d\theta=2\pi\\
+        &\Rightarrow \int_{0}^{2\pi}e^{\cos\theta}\left(\cos\sin\theta+i\sin\sin\theta\right)d\theta=2\pi
+    \end{align*}
+    通过实部和虚部相对应可以得到:
+    \begin{align*}
+        &\int_{0}^{2\pi}e^{\cos \theta}\cos(\sin\theta)d\theta=2\pi\\
+        &\int_{0}^{2\pi}e^{\cos \theta}\sin(\sin\theta)d\theta=0
+    \end{align*}
+    又令$u=2\pi-\theta$，有:
+    \begin{align*}
+        &2\pi=\int_{0}^{2\pi}e^{\cos \theta}\cos(\sin\theta)d\theta\\
+        &=\int_{0}^{\pi}e^{\cos \theta}\cos(\sin\theta)d\theta+\int_{\pi}^{2\pi}e^{\cos \theta}\cos(\sin\theta)d\theta\\
+        &=\int_{0}^{\pi}e^{\cos \theta}\cos(\sin\theta)d\theta+\int_{\pi}^{0}e^{\cos (2\pi-u)}\cos(\sin(2\pi-u))d(2\pi-u)\\
+        &=2\int_{0}^{\pi}e^{\cos \theta}\cos(\sin\theta)d\theta\\
+        &\Rightarrow \int_{0}^{\pi}e^{\cos \theta}\cos(\sin\theta)d\theta=\pi
+    \end{align*}
+\end{zm}
+\end{document}
