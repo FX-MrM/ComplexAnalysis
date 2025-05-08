@@ -1,0 +1,336 @@
+\documentclass{ctexart}
+\usepackage{paracol}
+\usepackage{newtxtext, geometry, amsmath, amssymb,yhmath}
+\usepackage{graphicx}
+\usepackage{amsthm} % 设置定理环境，要在amsmath后用
+\usepackage{xpatch} % 用于去除amsthm定义的编号后面的点
+\usepackage[strict]{changepage} % 提供一个 adjustwidth 环境
+\usepackage{multicol} % 用于分栏
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,patterns,calc}
+\usepackage[fontsize=14pt]{fontsize} % 字号设置
+\usepackage{esvect} % 实现向量箭头输入（显示效果好于\vec{}和\overrightarrow{}），格式为\vv{⟨向量符号⟩}或\vv*{⟨向量符号⟩}{⟨下标⟩} 
+\usepackage[
+            colorlinks, % 超链接以颜色来标识，而并非使用默认的方框来标识
+            linkcolor=mlv,
+            anchorcolor=mlv,
+            citecolor=mlv % 设置各种超链接的颜色
+            ]
+            {hyperref} % 实现引用超链接功能
+\usepackage{tcolorbox} % 盒子效果
+\tcbuselibrary{most} % tcolorbox宏包的设置，详见宏包说明文档
+\tcbuselibrary{breakable=forced}
+\geometry{a4paper,centering,scale=0.8}
+
+% ————————————————————————————————————自定义符号————————————————————————————————————
+\newcommand{\。}{．} % 示例：将指令\。定义为全角句点。
+\newcommand{\zte}{\mathrm{e}} % 正体e
+\newcommand{\ztd}{\mathrm{d}} % 正体d
+\newcommand{\zti}{\mathrm{i}} % 正体i
+\newcommand{\ztj}{\mathrm{j}} % 正体j
+\newcommand{\ztk}{\mathrm{k}} % 正体k
+\newcommand{\CC}{\mathbb{C}} % 黑板粗体C
+\newcommand{\QQ}{\mathbb{Q}} % 黑板粗体Q
+\newcommand{\RR}{\mathbb{R}} % 黑板粗体R
+\newcommand{\ZZ}{\mathbb{Z}} % 黑板粗体Z
+\newcommand{\NN}{\mathbb{N}} % 黑板粗体N
+% ————————————————————————————————————自定义符号————————————————————————————————————
+
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+\definecolor{mlv}{RGB}{40, 137, 124} % 墨绿
+\definecolor{qlv}{RGB}{240, 251, 248} % 浅绿
+\definecolor{slv}{RGB}{33, 96, 92} % 深绿
+\definecolor{qlan}{RGB}{239, 249, 251} % 浅蓝
+\definecolor{slan}{RGB}{3, 92, 127} % 深蓝
+\definecolor{hlan}{RGB}{82, 137, 168} % 灰蓝
+\definecolor{qhuang}{RGB}{246, 250, 235} % 浅黄
+\definecolor{shuang}{RGB}{77, 82, 59} % 深黄
+\definecolor{qzi}{RGB}{240, 243, 252} % 浅紫
+\definecolor{szi}{RGB}{49, 55, 70} % 深紫
+% 将RGB换为rgb，颜色数值取值范围改为0到1
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+
+% ————————————————————————————————————盒子设置————————————————————————————————————
+% tolorbox提供了tcolorbox环境，其格式如下：
+% 第一种格式：\begin{tcolorbox}[colback=⟨背景色⟩, colframe=⟨框线色⟩, arc=⟨转角弧度半径⟩, boxrule=⟨框线粗⟩]   \end{tcolorbox}
+% 其中设置arc=0mm可得到直角；boxrule可换为toprule/bottomrule/leftrule/rightrule可分别设置对应边宽度，但是设置为0mm时仍有细边，若要绘制单边框线推荐使用第二种格式
+% 方括号内加上title=⟨标题⟩, titlerule=⟨标题背景线粗⟩, colbacktitle=⟨标题背景线色⟩可为盒子加上标题及其背景线
+\newenvironment{kuang1}{
+    \begin{tcolorbox}[breakable,colback=hlan, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+\newenvironment{kuang2}{
+    \begin{tcolorbox}[breakable,colback=hlan!5!white, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+% 第二种格式：\begin{tcolorbox}[enhanced, colback=⟨背景色⟩, boxrule=0pt, frame hidden, borderline={⟨框线粗⟩}{⟨偏移量⟩}{⟨框线色⟩}]   {\end{tcolorbox}}
+% 将borderline换为borderline east/borderline west/borderline north/borderline south可分别为四边添加框线，同一边可以添加多条
+% 偏移量为正值时，框线向盒子内部移动相应距离，负值反之
+\newenvironment{kuang3}{
+    \begin{tcolorbox}[breakable,enhanced, colback=hlan!5!white, boxrule=0pt, frame hidden,
+        borderline south={0.5mm}{0.1mm}{hlan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lvse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlv, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slv}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lanse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlan, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{huangse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qhuang, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{shuang}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{zise}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qzi, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{szi}]
+    }
+    {\end{tcolorbox}}
+% tcolorbox宏包还提供了\tcbox指令，用于生成行内盒子，可制作高光效果
+\newcommand{\hl}[1]{
+    \tcbox[on line, arc=0pt, colback=hlan!5!white, colframe=hlan!5!white, boxsep=1pt, left=1pt, right=1pt, top=1.5pt, bottom=1.5pt, boxrule=0pt]
+{\bfseries \color{hlan}#1}}
+% 其中on line将盒子放置在本行（缺失会跳到下一行），boxsep用于控制文本内容和边框的距离，left、right、top、bottom则分别在boxsep的参数的基础上分别控制四边距离
+% ————————————————————————————————————盒子设置————————————————————————————————————
+
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+\setCJKfamilyfont{xbsong}{方正小标宋简体}
+\newcommand{\xbsong}{\CJKfamily{xbsong}}
+% CTeX宏集还预定义了\songti、\heiti、\fangsong、\kaishu、\lishu、\youyuan、\yahei、\pingfang等字体命令
+% 由于未知原因，一些设备可能无法调用这些字体，故此文档暂时未使用
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+\ctexset{
+    % 修改 section。
+    section={   
+    % 设置标题编号前后的词语，使用name={⟨前部分⟩,⟨后部分⟩}参数进行设置。    
+        name={\textbf{第},\textbf{章}\hspace{18pt}},
+    % 使用number参数设置标题编号，\arabic设置为阿拉伯数字，\chinese设置为中文，\roman设置为小写罗马字母，\Roman设置为大写罗马字母，\alph设置为小写英文，\Alph设置为大写英文。
+        number={\textbf{\chinese{section}}},
+    % 参数format设置标题整体的样式。包括标题主题、编号以及编号前后的词语。
+    % 参数format还可以设置标题的对齐方式。居中对齐\centering，左对齐\raggedright，右对齐\hfill
+        format=\color{hlan}\centering\zihao{2}, % 设置 section 标题为正蓝色、黑体、居中对齐、小二号字
+    % 取消编号后的空白。编号后有一段空白，参数aftername=\hspace{0pt}可以用来控制编号与标题之间的距离。
+        aftername={}
+    },
+    % 修改 subsection。
+    subsection={   
+        name={\S \hspace{6pt}, \hspace{8pt}},
+        number={\arabic{section}.\arabic{subsection}},
+        format=\color{hlan}\centering\zihao{-2}, % 设置 subsection 标题为黑体、三号字
+        aftername=\hspace{0pt}
+    },
+    subsubsection={   
+        name={,、},
+        number={\chinese{subsubsection}},
+        format=\raggedright\color{hlan}\zihao{3},
+        aftername=\hspace{0pt}
+    },
+    part={   
+        name={第,部分},
+        number={\chinese{part}},
+        format=\color{white}\centering\bfseries\zihao{-1},
+        aftername=\hspace{1em}
+    }
+}
+% 各个标题设置的各行结尾一定要记得写逗号！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+\newtheoremstyle{t}{0pt}{}{}{\parindent}{\bfseries}{}{1em}{} % 定义新定理风格。格式如下：
+%\newtheoremstyle{⟨风格名⟩}
+%                {⟨上方间距⟩} % 若留空，则使用默认值
+%                {⟨下方间距⟩} % 若留空，则使用默认值
+%                {⟨主体字体⟩} % 如 \itshape
+%                {⟨缩进长度⟩} % 若留空，则无缩进；可以使用 \parindent 进行正常段落缩进
+%                {⟨定理头字体⟩} % 如 \bfseries
+%                {⟨定理头后的标点符号⟩} % 如点号、冒号
+%                {⟨定理头后的间距⟩} % 不可留空，若设置为 { }，则表示正常词间间距；若设置为 {\newline}，则环境内容开启新行
+%                {⟨定理头格式指定⟩} % 一般留空
+% 定理风格决定着由 \newtheorem 定义的环境的具体格式，有三种定理风格是预定义的，它们分别是：
+% plain: 环境内容使用意大利斜体，环境上下方添加额外间距
+% definition: 环境内容使用罗马正体，环境上下方添加额外间距
+% remark: 环境内容使用罗马正体，环境上下方不添加额外间距
+\theoremstyle{t} % 设置定理风格
+\newtheorem{dyhj}{\color{slv} 定义}[subsection] % 定义定义环境，格式为\newtheorem{⟨环境名⟩}{⟨定理头文本⟩}[⟨上级计数器⟩]或\newtheorem{⟨环境名⟩}[⟨共享计数器⟩]{⟨定理头文本⟩}，其变体\newtheorem*不带编号
+\newtheorem{dlhj}{\color{shuang} 定理}[subsection]
+\newtheorem{lthj}{\color{szi} }
+\newtheorem*{tmhj}{\color{slan} 解}
+\newtheorem*{jiehj}{\color{slan} 解}
+\newtheorem*{zmhj}{\color{slan} 证明}
+\newtheorem*{smhj}{\color{slan} }
+\newenvironment{dy}{\begin{lvse}\begin{dyhj}}{\end{dyhj}\end{lvse}}
+\newenvironment{zm}{\begin{lanse}\begin{zmhj}}{$\hfill \square$\end{zmhj}\end{lanse}}
+\newenvironment{dl}{\begin{huangse}\begin{dlhj}}{\end{dlhj}\end{huangse}}
+\newenvironment{lt}{\begin{zise}\begin{lthj}}{\end{lthj}\end{zise}}
+\newenvironment{tm}{\begin{lanse}\begin{tmhj}}{\end{tmhj}\end{lanse}}
+\newenvironment{sm}{\begin{zise}\begin{smhj}}{\end{smhj}\end{zise}}
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+
+% ————————————————————————————————————目录设置————————————————————————————————————
+\setcounter{tocdepth}{4} % 设置在 ToC 的显示的章节深度
+\setcounter{secnumdepth}{3} % 设置章节的编号深度
+% 数值可选选项：-1 part 0 chapter 1 section 2 subsection 3 subsubsection 4 paragraph 5 subparagraph
+\renewcommand{\contentsname}{\bfseries 目\hspace{1em}录}
+% ————————————————————————————————————目录设置————————————————————————————————————
+
+\everymath{\displaystyle} % 设置所有数学公式显示为行间公式的样式
+
+\begin{document}
+
+\quad\\
+{
+\Huge \bfseries 
+\begin{kuang3}
+    \color{hlan}
+    \centering
+    复变函数论第十一次作业\\
+    20234544 毛华豪
+\end{kuang3}
+}
+
+\thispagestyle{empty} % 取消这一页的页码
+
+% ————————————————————————————————————页码设置————————————————————————————————————
+% \pagenumbering{Roman}
+% \setcounter{page}{1}
+
+% \begin{multicols}{2} % 设置环境中内容为两栏。数字为栏数
+%     {
+%     \tableofcontents
+%     }
+% \end{multicols}
+
+% \newpage
+% \setcounter{page}{1}
+% \pagenumbering{arabic}
+% ————————————————————————————————————页码设置————————————————————————————————————
+
+% 指令\addcontentsline{toc}{⟨章节层级⟩}{⟨标题名⟩}可将“⟨标题名⟩”加入目录。如为无章节层级的标题，可先用\phantomsection指令添加section分级
+
+% \begin{kuang1}
+%     \part{第一部分的标题}
+% \end{kuang1}
+
+% \begin{kuang2}
+%     \section{第一章的标题}
+% \end{kuang2}
+
+% \begin{kuang3}
+%     \subsection{第一节的标题}
+% \end{kuang3}
+
+%\subsubsection{第一个大标题}
+
+
+% \begin{dy} % 开始定义环境，格式为\begin{⟨环境名⟩}[⟨定理名⟩]
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dy}
+
+% \begin{dl}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dl}
+
+% \begin{lt}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{lt}
+\begin{sm}
+    Task1:叙述并证明解析函数的最大模原理
+\end{sm}
+\begin{zm}
+设$f$在$D$上解析，则$|f(z)|$在$D$内任何一点都不能取到最大值，除非它是常数函数.\\
+$Proof:$ 设$M=\underset{z\in D}{sup}|f(z)|$，由于$f$不恒为0，所以$M>0$。用反证法，设$\exists z_0\in D\space s.t. \space |f(x_0)|=M$，由此$0<M<+\infty$.则取$z_0$为心，充分小的$R$为半径作圆周$|z-z_0|=R$，取逆时针方向，使得:
+\begin{align*}
+    \{z\in \mathbb{C}:|z-z_0|\le R\}\subset D
+\end{align*}
+由平均值定理
+\begin{align*}
+    f(z_0)=\frac{1}{2\pi}\int_{0}^{2\pi}f(z_0+Re^{i\theta})d\theta
+\end{align*}
+从而有
+\begin{align*}
+    M=|f(z_0)|\le \frac{1}{2\pi}\int_{0}^{2\pi}\underbrace{|f(z_0+Re^{i\theta})|}_{\le M}d\theta\le M
+\end{align*}
+由此可知$|f(z_0+Re^{i\theta})|=M,\forall \theta$，若不然，$\exists \theta_0\in[0,2\pi)\space s.t.\space |f(z_0+Re^{i\theta})|< M$由连续函数的局部保号性可以知道$\exists (\theta_0-\delta,\theta_0+\delta)\subset [0,2\pi)\space s.t.\space |f(z_0+Re^{i\theta})|<M,\quad \theta\in(\theta_0-\delta,\theta_0+\delta)$，所以有:
+\begin{align*}
+    &\frac{1}{2\pi}\int_{0}^{2\pi}|f(z_0+Re^{i\theta})|d\theta=M\\
+    =&\frac{1}{2\pi}\int_{\theta_0-\delta}^{\theta_0+\delta}+\frac{1}{2\pi}\int_{[0,2\pi)\backslash (\theta_0-\delta,\theta_0+\delta)}\\
+    \le& M\times \frac{2\delta}{2\pi}+\frac{M\times (2\pi-2\delta)}{2\pi}=M
+\end{align*}
+$M<M$矛盾.于是，以$z_0$为圆心，充分小的$R>0$为半径的圆周上$f(z)\equiv M,\quad |z-z_0|=R$，由$R$的任意性可以知道，存在$z_0$的某个小邻域$O(z_0,\delta)\subset D\space s.t. \space |f(z)|\equiv M,\quad z\in O(z_0,\delta)$，所以$f(z)\equiv M$或者$f(z)\equiv -M$，由解析函数零点孤立性的推论$f,g$在区域$D$上解析，且它们的$D$的某个子区域内的一段弧上相等，则$f(z)\equiv g(z),z\in D$可以得出$f(z)\equiv M,\quad z\in D$(或者取负值，总之是一个常数)
+\end{zm}
+\begin{sm}
+    Task2:设$f$为区域$D$上不恒为常数的解析函数，且$f(z_0)\neq 0$，其中$z_0\in D$求证$|f(z_0)|$不可能是$|f(z)|$在$D$上的最小值。
+\end{sm}
+\begin{zm}
+    因为$f$是区域$D$上的解析函数，并且$f(z_0)\neq 0$，由于连续函数的局部保号性，可以知道在$z_0$的某个小邻域$U=O(z_0,\delta)$上$f(z)\neq 0$，在这个邻域上考虑$g(z)=\frac{1}{f(z)}$则函数$g(z)$在$U$上解析并且不可能是常数函数(否则由零点孤立性定理的推论可以知道区域上的函数$f$为常数与条件矛盾)，所以运用解析函数的最大模原理可知$|g(z_0)|$不是区域$U$上的最大值，即存在$z'\in \bar{U},\space s.t.\space |g(z')|>|g(z_0)|\rightarrow |f(z')|<|f(z_0)|$此即$|f(z)|$不是$D$上的最小值。
+\end{zm}
+\begin{sm}
+    Task3:设\begin{align*}
+        f(z)=\sum_{n=0}^{\infty}a_n(z-a_n)^n,\quad |z-a|<r<+\infty
+    \end{align*}
+    证明：若恒有$|f(z)|\le M$，其中$M$为常数，则\begin{align*}
+        \sum_{n=0}^{\infty}|a_n|^nr^{2n}\le M^2
+    \end{align*}并由此证明最大模原理
+\end{sm}
+\begin{zm}
+    由于函数可以在收敛域$|z-a|\le r\le +\infty$中展开成幂级数，所以一定在$|z-a|\le r$上是解析的。利用$Parseval$恒等式可以得到，对于函数$f(z)=\sum_{n=0}^{\infty}a_n(z-a)^n$在圆周$|z-a|\rho,(0<\rho<r)$上满足\begin{align*}
+        \sum_{n=0}^{\infty}|a_n|^2\rho^{2n}=\frac{1}{2\pi}\int_{0}^{2\pi}|f(a+\rho e^{i\theta})|^2d\theta
+    \end{align*}(这个恒等式在第十次作业的第8题有证明)，故我们有:
+    \begin{align*}
+        \sum_{n=0}^{\infty}|a_n|^2\rho^{2n}\overset{|f(z)|\le M}{\le} \frac{1}{2\pi}\int_{0}^{2\pi}M^2d\theta=M^2 
+    \end{align*}
+    令$\rho\to r^-$可以得到不等式$\sum_{n=0}^{\infty}|a_n|^2r^{2n}\le M$成立。\\
+    下一步，利用这个恒等式证明最大模原理。\\
+    假设在内部取到最大值，不妨就设在$a$点，(否则考虑在这个点的泰勒展开有如上相似的结论)则有$a_0=|f(a)|=M$代入不等式有:
+    \begin{align*}
+        |a_0|^2+\sum_{n=1}^{\infty}|a_n|^2r^{2n}\le M^2\Rightarrow M^2+\sum_{n=1}^{\infty}|a_n|^2r^{2n}\le M^2
+    \end{align*}
+    所以$\forall n\ge 1$有$a_n=0$所以幂级数退化为常数。综上，若是在区域内部取到最大值，则一定为常值函数。
+\end{zm}
+\begin{sm}
+    Task4:设非常值函数$f$在有界区域$D$上解析，在$D$的闭包$\overline{D}$上连续，且$f$在$D$内无零点。证明：若存在常数$m>0$使得\begin{align*}
+        |f(z)|\ge m,\quad z\in D
+    \end{align*}
+    则必有\begin{align*}
+        |f(z)|>m,\quad z\in D
+    \end{align*}
+\end{sm}
+\begin{zm}
+    由于$f$在$D$内无零点，所以我们考虑$g(z)=\frac{1}{f(z)}$在整个区域$D$上解析，并且在$\overline{D}$上连续。$|f(z)|\ge m$可以推出$\frac{1}{|f(z)|}=|g(z)|\le \frac{1}{m}$。若存在$z_0\in D$使得$|g(z_0)|=\frac{1}{m}\ge |g(z)|$，那么根据最大模原理，函数$g(z)$一定是一个常值函数，故而$f(z)=\frac{1}{g(z)}$也是一个常值函数，这和条件矛盾，所以不存在这样的内点$z_0$所以对于所有的$z\in D$有$|g(z)|<\frac{1}{m}$即$|f(z)|>m$.
+\end{zm}
+\begin{sm}
+    Task5:设函数$f$在开的单位圆盘$\mathbb{D}=\{z\in\mathbb{C}:|z|<1\}$上解析，在闭的单位圆盘$\mathbb{D}$上连续，求证：存在一列多项式$\{p_n\}_n^\infty$，使得该多项式在$\overline{D}$上一致收敛于$f$.
+\end{sm}
+\begin{zm}
+    根据提示，对于$r=r(n)=\frac{n-1}{n},n=1,2\dots$，考虑函数列$f_{r_{(n)}}(z)=f(r_{(n)}z)$。因为$f$在$\mathbb{D}$上解析，所以$f_r(z)$在$|z|\le \frac{1}{r}$上解析，并且有$\overline{\mathbb{D}}\subset \{z:|z|<\frac{1}{r}\}$，根据泰勒定理(解析函数的泰勒展开)以及幂级数的性质(在收敛域内内闭一致收敛)可以知道$f_r$的泰勒级数\begin{align*}
+        \sum_{n=0}^{\infty}a_nr^nz^n
+    \end{align*}在$\overline{\mathbb{D}}$上一致收敛于$f_r=p_n,n=1,2,\dots$.根据函数项级数一致收敛的定义，即对于任意的$\epsilon>0$，存在只与$\epsilon$有关的正整数$N$使得
+    \begin{align*}
+        \underset{z\in\overline{\mathbb{D}}}{\sup}\left|\sum_{n=0}^{N}a_nr^nz^n-f_r(z)\right|<\epsilon
+    \end{align*}
+    即对于任意的$|z|\le 1$有
+    \begin{align*}
+        \left|\sum_{n=0}^{N}a_nr(i)^nz^n-f(r(i)z)\right|<\epsilon,\quad i=1,2\dots
+    \end{align*}
+    由于$f$在$\overline{D}$上是连续的，因而是一致连续的，此即对于以上相同的$\epsilon$有存在$\delta>0$当$|z'-z|<\delta$时有$|f(z')-f(z)|<\epsilon\quad \forall z\in\overline{\mathbb{D}}$
+    考虑$i\to\infty$即$r(i)\to 1^-$，则有$|r(i)z-z|=|z||r(i)-1|\le |r(i)-1|\to 0$，所以
+    \begin{align*}
+        |f(r(i)z)-f(z)|\le \epsilon\quad \forall z\in\overline{\mathbb{D}}
+    \end{align*}
+    所以对于固定的$z\in\overline{\mathbb{D}}$，令$i\to \infty,r(i)\to 1^-$有
+    \begin{align*}
+        \left|\sum_{n=0}^{N}a_nr(i)^nz^n-f(z)\right|\le \left|\sum_{n=0}^{N}a_nr(i)^nz^n-f(rz)\right|+\left|f(rz)-f(z)\right|<2\epsilon
+    \end{align*}
+    所以多项式序列$p_i'=\sum_{n=0}^{N}a_nr(i)^nz^n,i=1,2\dots,\infty$一致收敛于$f$，考虑到$\epsilon$的任意性我们取$p_i=\sum_{n=0}^{\infty}a_nr(i)^nz^n,i=1,2\dots$，所以这样的多项式序列存在。
+\end{zm}
+\end{document}
