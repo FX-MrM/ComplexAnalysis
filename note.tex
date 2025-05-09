@@ -1,0 +1,427 @@
+\documentclass{ctexart}
+\usepackage{paracol}
+\usepackage{newtxtext, geometry, amsmath, amssymb,yhmath}
+\usepackage{graphicx}
+\usepackage{amsthm} % 设置定理环境，要在amsmath后用
+\usepackage{xpatch} % 用于去除amsthm定义的编号后面的点
+\usepackage[strict]{changepage} % 提供一个 adjustwidth 环境
+\usepackage{multicol} % 用于分栏
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,patterns,calc}
+\usepackage[fontsize=14pt]{fontsize} % 字号设置
+\usepackage{esvect} % 实现向量箭头输入（显示效果好于\vec{}和\overrightarrow{}），格式为\vv{⟨向量符号⟩}或\vv*{⟨向量符号⟩}{⟨下标⟩} 
+\usepackage[
+            colorlinks, % 超链接以颜色来标识，而并非使用默认的方框来标识
+            linkcolor=mlv,
+            anchorcolor=mlv,
+            citecolor=mlv % 设置各种超链接的颜色
+            ]
+            {hyperref} % 实现引用超链接功能
+\usepackage{tcolorbox} % 盒子效果
+\tcbuselibrary{most} % tcolorbox宏包的设置，详见宏包说明文档
+\tcbuselibrary{breakable=forced}
+\geometry{a4paper,centering,scale=0.8}
+
+% ————————————————————————————————————自定义符号————————————————————————————————————
+\newcommand{\。}{．} % 示例：将指令\。定义为全角句点。
+\newcommand{\zte}{\mathrm{e}} % 正体e
+\newcommand{\ztd}{\mathrm{d}} % 正体d
+\newcommand{\zti}{\mathrm{i}} % 正体i
+\newcommand{\ztj}{\mathrm{j}} % 正体j
+\newcommand{\ztk}{\mathrm{k}} % 正体k
+\newcommand{\CC}{\mathbb{C}} % 黑板粗体C
+\newcommand{\QQ}{\mathbb{Q}} % 黑板粗体Q
+\newcommand{\RR}{\mathbb{R}} % 黑板粗体R
+\newcommand{\ZZ}{\mathbb{Z}} % 黑板粗体Z
+\newcommand{\NN}{\mathbb{N}} % 黑板粗体N
+% ————————————————————————————————————自定义符号————————————————————————————————————
+
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+\definecolor{mlv}{RGB}{40, 137, 124} % 墨绿
+\definecolor{qlv}{RGB}{240, 251, 248} % 浅绿
+\definecolor{slv}{RGB}{33, 96, 92} % 深绿
+\definecolor{qlan}{RGB}{239, 249, 251} % 浅蓝
+\definecolor{slan}{RGB}{3, 92, 127} % 深蓝
+\definecolor{hlan}{RGB}{82, 137, 168} % 灰蓝
+\definecolor{qhuang}{RGB}{246, 250, 235} % 浅黄
+\definecolor{shuang}{RGB}{77, 82, 59} % 深黄
+\definecolor{qzi}{RGB}{240, 243, 252} % 浅紫
+\definecolor{szi}{RGB}{49, 55, 70} % 深紫
+% 将RGB换为rgb，颜色数值取值范围改为0到1
+% ————————————————————————————————————自定义颜色————————————————————————————————————
+
+% ————————————————————————————————————盒子设置————————————————————————————————————
+% tolorbox提供了tcolorbox环境，其格式如下：
+% 第一种格式：\begin{tcolorbox}[colback=⟨背景色⟩, colframe=⟨框线色⟩, arc=⟨转角弧度半径⟩, boxrule=⟨框线粗⟩]   \end{tcolorbox}
+% 其中设置arc=0mm可得到直角；boxrule可换为toprule/bottomrule/leftrule/rightrule可分别设置对应边宽度，但是设置为0mm时仍有细边，若要绘制单边框线推荐使用第二种格式
+% 方括号内加上title=⟨标题⟩, titlerule=⟨标题背景线粗⟩, colbacktitle=⟨标题背景线色⟩可为盒子加上标题及其背景线
+\newenvironment{kuang1}{
+    \begin{tcolorbox}[breakable,colback=hlan, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+\newenvironment{kuang2}{
+    \begin{tcolorbox}[breakable,colback=hlan!5!white, colframe=hlan, arc = 1mm]
+    }
+    {\end{tcolorbox}}
+% 第二种格式：\begin{tcolorbox}[enhanced, colback=⟨背景色⟩, boxrule=0pt, frame hidden, borderline={⟨框线粗⟩}{⟨偏移量⟩}{⟨框线色⟩}]   {\end{tcolorbox}}
+% 将borderline换为borderline east/borderline west/borderline north/borderline south可分别为四边添加框线，同一边可以添加多条
+% 偏移量为正值时，框线向盒子内部移动相应距离，负值反之
+\newenvironment{kuang3}{
+    \begin{tcolorbox}[breakable,enhanced, colback=hlan!5!white, boxrule=0pt, frame hidden,
+        borderline south={0.5mm}{0.1mm}{hlan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lvse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlv, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slv}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{lanse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qlan, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{slan}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{huangse}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qhuang, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{shuang}]
+    }
+    {\end{tcolorbox}}
+\newenvironment{zise}{
+    \begin{tcolorbox}[breakable,enhanced, colback=qzi, boxrule=0pt, frame hidden,
+        borderline west={0.7mm}{0.1mm}{szi}]
+    }
+    {\end{tcolorbox}}
+% tcolorbox宏包还提供了\tcbox指令，用于生成行内盒子，可制作高光效果
+\newcommand{\hl}[1]{
+    \tcbox[on line, arc=0pt, colback=hlan!5!white, colframe=hlan!5!white, boxsep=1pt, left=1pt, right=1pt, top=1.5pt, bottom=1.5pt, boxrule=0pt]
+{\bfseries \color{hlan}#1}}
+% 其中on line将盒子放置在本行（缺失会跳到下一行），boxsep用于控制文本内容和边框的距离，left、right、top、bottom则分别在boxsep的参数的基础上分别控制四边距离
+% ————————————————————————————————————盒子设置————————————————————————————————————
+
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+\setCJKfamilyfont{xbsong}{方正小标宋简体}
+\newcommand{\xbsong}{\CJKfamily{xbsong}}
+% CTeX宏集还预定义了\songti、\heiti、\fangsong、\kaishu、\lishu、\youyuan、\yahei、\pingfang等字体命令
+% 由于未知原因，一些设备可能无法调用这些字体，故此文档暂时未使用
+% ————————————————————————————————————自定义字体设置————————————————————————————————————
+
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+\ctexset{
+    % 修改 section。
+    section={   
+    % 设置标题编号前后的词语，使用name={⟨前部分⟩,⟨后部分⟩}参数进行设置。    
+        name={\textbf{第},\textbf{章}\hspace{18pt}},
+    % 使用number参数设置标题编号，\arabic设置为阿拉伯数字，\chinese设置为中文，\roman设置为小写罗马字母，\Roman设置为大写罗马字母，\alph设置为小写英文，\Alph设置为大写英文。
+        number={\textbf{\chinese{section}}},
+    % 参数format设置标题整体的样式。包括标题主题、编号以及编号前后的词语。
+    % 参数format还可以设置标题的对齐方式。居中对齐\centering，左对齐\raggedright，右对齐\hfill
+        format=\color{hlan}\centering\zihao{2}, % 设置 section 标题为正蓝色、黑体、居中对齐、小二号字
+    % 取消编号后的空白。编号后有一段空白，参数aftername=\hspace{0pt}可以用来控制编号与标题之间的距离。
+        aftername={}
+    },
+    % 修改 subsection。
+    subsection={   
+        name={\S \hspace{6pt}, \hspace{8pt}},
+        number={\arabic{section}.\arabic{subsection}},
+        format=\color{hlan}\centering\zihao{-2}, % 设置 subsection 标题为黑体、三号字
+        aftername=\hspace{0pt}
+    },
+    subsubsection={   
+        name={,、},
+        number={\chinese{subsubsection}},
+        format=\raggedright\color{hlan}\zihao{3},
+        aftername=\hspace{0pt}
+    },
+    part={   
+        name={第,部分},
+        number={\chinese{part}},
+        format=\color{white}\centering\bfseries\zihao{-1},
+        aftername=\hspace{1em}
+    }
+}
+% 各个标题设置的各行结尾一定要记得写逗号！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+% ————————————————————————————————————各级标题设置————————————————————————————————————
+
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+\newtheoremstyle{t}{0pt}{}{}{\parindent}{\bfseries}{}{1em}{} % 定义新定理风格。格式如下：
+%\newtheoremstyle{⟨风格名⟩}
+%                {⟨上方间距⟩} % 若留空，则使用默认值
+%                {⟨下方间距⟩} % 若留空，则使用默认值
+%                {⟨主体字体⟩} % 如 \itshape
+%                {⟨缩进长度⟩} % 若留空，则无缩进；可以使用 \parindent 进行正常段落缩进
+%                {⟨定理头字体⟩} % 如 \bfseries
+%                {⟨定理头后的标点符号⟩} % 如点号、冒号
+%                {⟨定理头后的间距⟩} % 不可留空，若设置为 { }，则表示正常词间间距；若设置为 {\newline}，则环境内容开启新行
+%                {⟨定理头格式指定⟩} % 一般留空
+% 定理风格决定着由 \newtheorem 定义的环境的具体格式，有三种定理风格是预定义的，它们分别是：
+% plain: 环境内容使用意大利斜体，环境上下方添加额外间距
+% definition: 环境内容使用罗马正体，环境上下方添加额外间距
+% remark: 环境内容使用罗马正体，环境上下方不添加额外间距
+\theoremstyle{t} % 设置定理风格
+\newtheorem{dyhj}{\color{slv} 定义}[subsection] % 定义定义环境，格式为\newtheorem{⟨环境名⟩}{⟨定理头文本⟩}[⟨上级计数器⟩]或\newtheorem{⟨环境名⟩}[⟨共享计数器⟩]{⟨定理头文本⟩}，其变体\newtheorem*不带编号
+\newtheorem{dlhj}{\color{shuang} 定理}[subsection]
+\newtheorem{lthj}{\color{szi} }
+\newtheorem*{tmhj}{\color{slan} 解}
+\newtheorem*{jiehj}{\color{slan} 解}
+\newtheorem*{zmhj}{\color{slan} 证明}
+\newtheorem*{smhj}{\color{slan} }
+\newenvironment{dy}{\begin{lvse}\begin{dyhj}}{\end{dyhj}\end{lvse}}
+\newenvironment{zm}{\begin{lanse}\begin{zmhj}}{$\hfill \square$\end{zmhj}\end{lanse}}
+\newenvironment{dl}{\begin{huangse}\begin{dlhj}}{\end{dlhj}\end{huangse}}
+\newenvironment{lt}{\begin{zise}\begin{lthj}}{\end{lthj}\end{zise}}
+\newenvironment{tm}{\begin{lanse}\begin{tmhj}}{\end{tmhj}\end{lanse}}
+\newenvironment{sm}{\begin{zise}\begin{smhj}}{\end{smhj}\end{zise}}
+% ————————————————————————————————————定理类环境设置————————————————————————————————————
+
+% ————————————————————————————————————目录设置————————————————————————————————————
+\setcounter{tocdepth}{4} % 设置在 ToC 的显示的章节深度
+\setcounter{secnumdepth}{3} % 设置章节的编号深度
+% 数值可选选项：-1 part 0 chapter 1 section 2 subsection 3 subsubsection 4 paragraph 5 subparagraph
+\renewcommand{\contentsname}{\bfseries 目\hspace{1em}录}
+% ————————————————————————————————————目录设置————————————————————————————————————
+
+\everymath{\displaystyle} % 设置所有数学公式显示为行间公式的样式
+
+\begin{document}
+
+\quad\\
+{
+\Huge \bfseries 
+\begin{kuang3}
+    \color{hlan}
+    \centering
+    复变函数论期中考试复习题\\
+    20234544 毛华豪
+\end{kuang3}
+}
+
+\thispagestyle{empty} % 取消这一页的页码
+
+% ————————————————————————————————————页码设置————————————————————————————————————
+% \pagenumbering{Roman}
+% \setcounter{page}{1}
+
+% \begin{multicols}{2} % 设置环境中内容为两栏。数字为栏数
+%     {
+%     \tableofcontents
+%     }
+% \end{multicols}
+
+% \newpage
+% \setcounter{page}{1}
+% \pagenumbering{arabic}
+% ————————————————————————————————————页码设置————————————————————————————————————
+
+% 指令\addcontentsline{toc}{⟨章节层级⟩}{⟨标题名⟩}可将“⟨标题名⟩”加入目录。如为无章节层级的标题，可先用\phantomsection指令添加section分级
+
+% \begin{kuang1}
+%     \part{第一部分的标题}
+% \end{kuang1}
+
+% \begin{kuang2}
+%     \section{第一章的标题}
+% \end{kuang2}
+
+% \begin{kuang3}
+%     \subsection{第一节的标题}
+% \end{kuang3}
+
+%\subsubsection{第一个大标题}
+
+
+% \begin{dy} % 开始定义环境，格式为\begin{⟨环境名⟩}[⟨定理名⟩]
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dy}
+
+% \begin{dl}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{dl}
+
+% \begin{lt}
+% 测试
+% $$\int_{a}^{b} f(x)dx = F(b)-F(a) $$
+% \end{lt}
+\begin{sm}
+    $Task1$：是否存在解析函数$f(z)=u(x,y)+iv(x,y)$，其中$u$和$v$都是实值函数，且满足
+    \begin{align*}
+        u+v=(x-y)(x^2+4xy+y^2)-2(x+y),\quad z=x+iy
+    \end{align*}
+    若存在，求出$f(z)$;否则，请说明理由.
+\end{sm}
+\begin{zm}
+    因为$f(z)$要求是一个解析函数，所以一定满足柯西黎曼方程
+    \begin{align*}
+        &\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}\\
+        &\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}
+    \end{align*}
+    所以对等式两边同时求偏导得到:
+    \begin{align*}
+        &\frac{\partial u}{\partial x}+\frac{\partial v}{\partial x}=3x^2+6xy-3y^2-2=\frac{\partial u}{\partial x}-\frac{\partial u}{\partial y}\\
+        &\frac{\partial u}{\partial y}+\frac{\partial v}{\partial y}=3x^2-6xy-3y^2-2=\frac{\partial u}{\partial y}+\frac{\partial u}{\partial x}
+    \end{align*}
+    所以有$\frac{\partial u}{\partial x}=3x^2-3y^2-2,\quad \frac{\partial u}{\partial y}=-6xy$。又因为
+    \begin{align*}
+        du=\frac{\partial u}{\partial x}dx+\frac{\partial u}{\partial y}dy
+    \end{align*}
+    所以对两边求导，可以得出$u(x,y)$从而解出$v(x,y)$
+    \begin{align*}
+        u(x,y)=x^3-3xy^2-2x\quad v(x,y)=-y^3+3x^2y-2y
+    \end{align*}
+    从而$f(z)=u+iv=x^3-3xy^2-2x-iy^3+3ix^2y-2iy=z^3-2z$(可以直接代入$x=iy-z$或$y=-i(x+z)$得到)，所以最终答案为\boxed{f(z)=z^3-2z}
+\end{zm}
+\begin{sm}
+    $Task2$：确定满足不等式\begin{align*}
+        1<\left|\frac{z-i}{z+i}\right|<2
+    \end{align*}的$z$所构成的平面点集，并作出其图形.
+\end{sm}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{12.2.png}
+    \caption{平面点集图形}
+\end{figure}
+\begin{tm}
+    图形如上，具体分析如下：不妨设$\left|\frac{z-i}{z+i}\right|=r,1<r<2$，则这个不等式表示的是一个以$(0,\frac{1-r}{1+r}),(0,-\frac{1+r}{r-1})$为直径，以$(0,-\frac{r^2+1}{r^2-1})$为圆心，$\frac{2r}{r^2-1}$为半径的一列圆的集合。由于$r\to 1^+$时过$y$轴的直径的上顶点$(0,\frac{1-r}{1+r})\to (0,0)$并且半径$\frac{2r}{r^2-1}\to\infty$.分析$y$轴上的两个直径顶点以及半径的变化趋势可以得到$\left|\frac{z-i}{z+i}\right|=r_1$所表示的圆一定包含在$\left|\frac{z-i}{z+i}\right|=r_2$内如果$r_1<r_2$，那么，满足不等式的点集即为$x$轴下半平面挖去$\left|\frac{z-i}{z+i}\right|=2$及内部的点得到的空间，解得$\left|\frac{z-i}{z+i}\right|=2$表示的边界圆为$\left|z+\frac{5i}{3}\right|=\frac{4}{3}$.所以平面点集为\boxed{\{z\in\mathbb{C}:Im(z)<0\cap\left|z+\frac{5i}{3}\right|>\frac{4}{3}\}}
+\end{tm}
+\begin{sm}
+    $Task3:$证明：关于实轴的对称变换$f(z)=\bar{z}$一定不是分式线性变换。
+\end{sm}
+\begin{zm}
+    分式线性变换具有保交比不变性，而$f(z)=\bar{z}$不具有这个性质，所以一定不是分式线性变换。具体地考虑$z_1=1+i,z_2=2,z_3=0,z_4=1$则
+    \begin{align*}
+        &(z_1,z_2,z_3,z_4)=\frac{(z_1-z_3)(z_2-z_4)}{(z_1-z_4)(z_2-z_3)}=\frac{1+i}{2i}\\
+        &(f(z_1),f(z_2),f(z_3),f(z_4))=\\
+        &\frac{(f(z_1)-f(z_3))(f(z_2)-f(z_4))}{(f(z_1)-f(z_4))(f(z_2)-f(z_3))}=\frac{1-i}{-2i}
+    \end{align*}
+    两者不相同，所以不具有保交比不变性，不是分式线性变换。
+\end{zm}
+\begin{sm}
+    $Task4:$计算复积分\begin{align*}
+        \int_{|z|=2}\frac{dz}{z(z-1)^2}
+    \end{align*}其中积分曲线$|z|=2$取逆时针方向.
+\end{sm}
+\begin{zm}
+    函数$\frac{1}{z(z-1)^2}$的奇点$z=0,1$都在圆周$|z|<2$中，所以考虑奇点外包围奇点足够小的圆周$C_1,C_2$，方向取逆时针方向。则在$C_1,C_2$之外，$|z|<2$之内函数是解析的，所以利用柯西积分定理得到积分的计算公式为
+    \begin{align}
+        \int_{|z|=2}=\int_{C_1}+\int_{C_2}
+    \end{align}
+    再利用柯西积分公式计算$\int_{C_1},\int_{C_2}$。回顾柯西积分公式，对于单连通区域或者多连通区域的边界$C$及其内部$D$，如果$f$在$D$上解析，且在$D\cup C$上连续，则
+    \begin{align*}
+        f(z)=\frac{1}{2\pi i}\int_{C}\frac{f(\xi)}{\xi-z}d\xi,\quad z\in D,
+    \end{align*}
+    并且$f$在$D$内有各阶导数，还满足
+    \begin{align*}
+        f^{(n)}(z)=\frac{n!}{2\pi i}\int_{C}\frac{f(\xi)}{(\xi-z)^{(n+1)}}d\xi,\quad z\in D,\space n\in\mathbb{N}
+    \end{align*}
+    所以原积分为
+    \begin{align*}
+        2\pi i\cdot \left(\frac{1}{(z-1)^2}\right)|_{z=0}+2\pi i\cdot\left(\frac{1}{z}\right)'|_{z=1}=0
+    \end{align*}
+    所以积分为\boxed{0}.
+\end{zm}
+\begin{sm}
+    $Task5:$计算复积分\begin{align*}
+        \int_{C}\frac{z^4}{(z^2+1)(z^2+2)^3}dz
+    \end{align*}
+    其中$C$是取逆时针方向的圆周$|z|=4$.
+\end{sm}
+\begin{tm}
+函数$\frac{z^4}{(z^2+1)(z^2+2)^3}$的奇点$\pm i,\pm\sqrt{2}i$都在圆周$|z|=4$内部，所以考虑在这些奇点外部做一个小圆周分别记为$C_1,C_2,C_3,C_4$都以逆时针为正，则在$C$内$C_1,C_2,C_3,C_4$外的区域函数解析，可以利用柯西积分定理得到原积分的计算公式为
+\begin{align*}
+    \int_{C}=\int_{C_1}+\int_{C_2}+\int_{C_3}+\int_{C_4}
+\end{align*}
+再类似$Task4$利用柯西积分公式可以得到原积分:假设$f_1(z)=\frac{z^4}{(z-i)(z^2+2)^3},f_2(z)=\frac{z^4}{(z+i)(z^2+2)^3},f_3(z)=\frac{z^4}{(z^2+1)(z-\sqrt{2}i)^3},f_4(z)=\frac{z^4}{(z^2+1)(z+\sqrt{2}i)^3}$
+则原积分变为\begin{align*}
+    2\pi i [f_1(-i)+f_2(i)+f_3''(-\sqrt{2}i)+f_4''(\sqrt{2}i)]
+\end{align*}
+前面两个值算出来分别是$\frac{1}{2i}$和$-\frac{1}{2i}$相互抵消，主要的困难在于求解$f_3,f_4$的二阶导数，我们采用对数微分法，即对函数两侧取自然对数
+\begin{align*}
+    \ln f_3&=\ln z^4-\ln (z^2+1)-\ln (z-\sqrt{2}i)^3\\
+    &=4\ln z-\ln (z^2+1)-3\ln(z-\sqrt{2}i)
+\end{align*}
+对等式两侧进行求导得到
+\begin{align*}
+    \frac{f_3'}{f_3}&=\frac{4}{z}-\frac{2z}{z^2+1}-\frac{3}{z-\sqrt{2}i}\\
+    f_3'(z)&=f_3(z)\left(\frac{4}{z}-\frac{2z}{z^2+1}-\frac{3}{z-\sqrt{2}i}\right)
+\end{align*}
+再对等式两侧求导得到
+\begin{align*}
+    f_3''(z)=f_3'(z)\left(\frac{4}{z}-\frac{2z}{z^2+1}-\frac{3}{z-\sqrt{2}i}\right)\\+f_3(z)\left(-\frac{4}{z^2}-\frac{2(1-z^2)}{(z^2+1)^2}+\frac{3}{(z-\sqrt{2}i)^2}\right)
+\end{align*}
+代入$-\sqrt{2}i$后得到的值为$-\frac{11i}{8\sqrt{2}}$同理$f_4''(\sqrt{2}i)=\frac{11i}{8\sqrt{2}}$所以最终的积分值为\boxed{0}
+\end{tm}
+\begin{sm}
+    $Task6:$假设函数$f(z)$在开圆盘$\mathbb{D}=\{z\in\mathbb{C}:|z|<1\}$上解析，$f(0)=0$.求证：函数项级数$\sum_{n=1}^{+\infty}f(z^n)$在$\mathbb{D}$上收敛，且其和函数在$\mathbb{D}$上解析.
+\end{sm}
+\begin{zm}
+    不妨令$f_n(z)=f(z^n),n=1,2\dots$，则由于$|z|<\Rightarrow |z^n|=|z|^n<1$所以$f_n(z)=f(z^n)$在$\mathbb{D}$上解析，并且可以知道在开圆盘的任意一个闭子区间上解析，故函数在$\mathbb{D}$上一致连续。由$f(0)=0$和$f_n(z)=f(z^n)$在原点的连续性可知
+    \begin{align*}
+        \forall \epsilon>0,\space \exists \delta=\delta(\epsilon)>0,\space \forall |z^n-0|<\delta: |f(z^n)-0|=|f_n(z)|<\frac{\epsilon}{2^n}
+    \end{align*}
+    函数项级数$\sum_{n=1}^{\infty}f(z^n)=\sum_{n=1}^{\infty}f_n(z)$的收敛性，对于上面的$\epsilon,\delta(\epsilon)$以及$\forall z\in D$考虑$N=\frac{\log \delta}{\log z}$，有：对于所有$m>n>N\Rightarrow |z^n|=|z|^n<|z|^{\frac{\log \delta}{\log |z|}}=\delta,|z^m|=|z|^m<|z|^{\frac{\log \delta}{\log |z|}}=\delta$，故有
+    \begin{align*}
+        \left|\sum_{k=n+1}^{m}f_k(z)\right|<\sum_{k=n+1}^{m}\left|f_k(z)\right|\le \sum_{k=n+1}^{m}\frac{\epsilon}{2^k}<\epsilon
+    \end{align*}
+    所以根据柯西收敛原理可知级数$\sum_{n=1}^{\infty}$在$\mathbb{D}$上收敛，并且是内闭一致收敛的，因为若取$\mathbb{D}$内的一个闭子集，则一定存在$|z_0|<1$使得$|z|<|z_0|$，所以对于上述的$N$取$\frac{\log\delta}{\log |z_0|}=N(\delta(\epsilon))=N(\epsilon)$可以控制所有闭子区域的点且只与$\epsilon$有关。故由和函数的定义可以得出$\sum_{n=1}^{\infty}f(z^n)=\sum_{n=1}^{\infty}f_n(z)$在$\mathbb{D}$上内闭一致收敛于它的和函数，因为已知$f_n(z)$在区域$\mathbb{D}$上是解析的，由$Weierstrass$定理知道其和函数在$\mathbb{D}$上解析。
+\end{zm}
+\begin{sm}
+    $Task7:$求将区域$\{z\in\mathbb{C}:-\frac{\pi}{3}<arg(z)<\frac{\pi}{3}\}$单叶解析地映射为圆盘$\Omega=\{w\in\mathbb{C}:|w-1|<1\}$的函数$w=f(z)$.
+\end{sm}
+\begin{zm}
+    我们需要先将区域$D$映射为右半平面，再将右半平面映射为上半平面，再将上半平面映射为单位圆周，最后做一个平移映射为最后的圆周。考虑将$D$映射为右半平面的映射$u=h(z)=z^{\frac{3}{2}}=\sqrt{z^3}$并取根式函数的主值分支。对于所有的$z\in D$有$z=|z|e^{i\theta}\Rightarrow z^{\frac{3}{2}}=|z|^{\frac{3}{2}}e^{\frac{3\theta}{2}i}$模长$|z|^{\frac{3}{2}}>0$角度$\frac{3\theta}{2}\in(-\frac{\pi}{2},\frac{\pi}{2})$所以映射到右半平面，而对于右半平面上的任意一点$z'=|z'|e^{i\alpha},\alpha\in (-\frac{\pi}{2}<arg(z)<\frac{\pi}{2})$有$|z'|^{\frac{2}{3}}e^{\frac{2\alpha}{3}i}\in D$满足$h(|z'|^{\frac{2}{3}}e^{\frac{2\alpha}{3}i})=|z'|e^{i\alpha}=z'$，所以这个映射是一个双射，即将扇形区域$D$映射为右半平面。考虑右半平面$\{z\in\mathbb{C}:Re(z)>0\}$变为上半平面的映射，实际为一个逆时针$90^\circ$的旋转，即映射为$v=g(u)=iu$。再考虑上半平面映射到单位圆周的分式线性变换$\xi=p(v)$，其一般形式为$p(v)=e^{i\theta}\frac{v-a}{v-\bar{a}}$。最后再考虑平移变换将$|\xi|<1$映射为$|w-1|<1$的映射$q(\xi)$，直接令$\xi=w-1\Rightarrow w=q(\xi)=\xi+1$。所以最终的变换$w=f(z)=q(\xi)=q(p(v))=q(p(g(u)))=q(p(g(h(z))))=qpgh(z)=e^{i\theta}\frac{iz^{\frac{3}{2}}-a}{iz^{\frac{3}{2}}-\bar{a}}+1$，其中我们取$u=h(z)$的主值分支，而$g,p,q$都是分式线性变换，复合以后仍然是单值解析的。
+    所以最后的答案为\boxed{f(z)=e^{i\theta}\frac{iz^{\frac{3}{2}}-a}{iz^{\frac{3}{2}}-\bar{a}}+1}
+\end{zm}
+\begin{sm}
+    $Task8:$设函数$f$在闭圆盘$\{z\in\mathbb{C}:|z|\le R\}$上解析，且
+    \begin{align*}
+        |f(z)|>2025,\quad |z|=R
+    \end{align*}
+    $f(0)<2025$.证明：存在$z_0$使得$|z_0|<R$满足$f(z_0)=0$
+\end{sm}
+\begin{zm}
+    假设不存在内点使得函数值为0，那么考虑函数$g(z)=\frac{1}{f(z)}$在闭圆盘上也是解析的。根据解析函数的最大模原理可以得出$\left|\frac{1}{f(z)}\right|=|g(z)|$在$|z|=R$上取到最大值，故$|g(z)|=\left|\frac{1}{f(z)}\right|>\left|\frac{1}{f(0)}\right|>\frac{1}{2025},\quad |z|=R$，又因为$|z|=R$上$|f(z)|>2025$所以$|g(z)|=\left|\frac{1}{f(z)}\right|<\frac{1}{2025}$矛盾，所以$\frac{1}{f}$不解析于闭圆盘，则一定存在一个点$z_0\in \{z\in\mathbb{C}:|z|\le R\}$使得$f(z_0)=0$且这个点$|z_0|\neq R$否则与条件矛盾。所以\boxed{\exists z_0:|z_0|<R\space s.t. \space f(z_0)=0}
+\end{zm}
+\begin{sm}
+    $Task9:$(1)叙述解析函数的最大模原理，并给出证明；\\
+    (2):设函数$B(z)$满足下列三个条件:\\
+    (i)在单位圆盘$|z|<1$内解析，在闭圆盘$|z|\le 1$上连续;\\
+    (ii)在单位圆周$|z|=1$上，$|B(z)|=1$;\\
+    (iii)在$|z|<1$内部$B(z)$只有有限个零点.\\
+    试利用(1)中的定理证明：$B(z)$是一个有限$Blaschke$乘积:
+    \begin{align*}
+        B(z)=e^{i\theta}\prod_{k=1}^{N}\frac{z-z_k}{1-\bar{z_k}z},
+    \end{align*}
+    其中$\theta\in\mathbb{R},N\in\mathbb{N},|z_k|<1\quad (1\le k\le N)$.
+\end{sm}
+\begin{zm}
+    (1):定理叙述：设$f$在$D$上解析，则$|f(z)|$在$D$内任何一点都不能取到最大值，除非它是常数函数.\\
+$Proof:$ 设$M=\underset{z\in D}{sup}|f(z)|$，由于$f$不恒为0，所以$M>0$。用反证法，设$\exists z_0\in D\space s.t. \space |f(x_0)|=M$，由此$0<M<+\infty$.则取$z_0$为心，充分小的$R$为半径作圆周$|z-z_0|=R$，取逆时针方向，使得:
+\begin{align*}
+    \{z\in \mathbb{C}:|z-z_0|\le R\}\subset D
+\end{align*}
+由平均值定理
+\begin{align*}
+    f(z_0)=\frac{1}{2\pi}\int_{0}^{2\pi}f(z_0+Re^{i\theta})d\theta
+\end{align*}
+从而有
+\begin{align*}
+    M=|f(z_0)|\le \frac{1}{2\pi}\int_{0}^{2\pi}\underbrace{|f(z_0+Re^{i\theta})|}_{\le M}d\theta\le M
+\end{align*}
+由此可知$|f(z_0+Re^{i\theta})|=M,\forall \theta$，若不然，$\exists \theta_0\in[0,2\pi)\space s.t.\space |f(z_0+Re^{i\theta})|< M$由连续函数的局部保号性可以知道$\exists (\theta_0-\delta,\theta_0+\delta)\subset [0,2\pi)\space s.t.\space |f(z_0+Re^{i\theta})|<M,\quad \theta\in(\theta_0-\delta,\theta_0+\delta)$，所以有:
+\begin{align*}
+    &\frac{1}{2\pi}\int_{0}^{2\pi}|f(z_0+Re^{i\theta})|d\theta=M\\
+    =&\frac{1}{2\pi}\int_{\theta_0-\delta}^{\theta_0+\delta}+\frac{1}{2\pi}\int_{[0,2\pi)\backslash (\theta_0-\delta,\theta_0+\delta)}\\
+    \le& M\times \frac{2\delta}{2\pi}+\frac{M\times (2\pi-2\delta)}{2\pi}=M
+\end{align*}
+$M<M$矛盾.于是，以$z_0$为圆心，充分小的$R>0$为半径的圆周上$f(z)\equiv M,\quad |z-z_0|=R$，由$R$的任意性可以知道，存在$z_0$的某个小邻域$O(z_0,\delta)\subset D\space s.t. \space |f(z)|\equiv M,\quad z\in O(z_0,\delta)$，所以$f(z)\equiv M$或者$f(z)\equiv -M$，由解析函数零点孤立性的推论$f,g$在区域$D$上解析，且它们的$D$的某个子区域内的一段弧上相等，则$f(z)\equiv g(z),z\in D$可以得出$f(z)\equiv M,\quad z\in D$(或者取负值，总之是一个常数)\\
+(2):不妨设有限个零点为$z_1,z_2,\dots ,z_M$，根据函数$B(z)$在单位圆盘内解析，在闭圆盘上连续，且$|z|=1$上$|B(z)|=1$，考虑单位圆盘内部的闭圆盘$C_r:|z|\le r$由最大模原理在这个闭圆盘上$|B(z)|\le\max \{B(z):z\in C_r\}=\max \{B(z):|z|=r\}$令$r\to 1^-$由于函数$B(z)$的连续性可知$|B(z)|\le 1$且在内部$|B(z)|<1$(类似第11次作业第4题做法可证)
+对于确定的$z_k$在闭圆盘内有$B(z_k)=0$，对于没有具体方向的函数，我们采用局部处理的方法，考虑$B(z)$的零点的函数因子$b_k(z)=\frac{z-z_k}{1-\bar{z_k}z},\quad k=1,2\dots,N$，对于每个函数因子$1-\bar{z_k}z\neq 0$所以在$|z|< 1$上也是解析的，并且$|z|=1$时，$|b_k|=\frac{|z-z_k|}{|1-\bar{z_k}z|}=\frac{|z-z_k|}{|1-\bar{z_k}z|\cdot |\bar{z}|}=\frac{|z-z_k|}{|\bar{z}-\bar{z_k}|}=1$，
+$B(z),b_k,k=1,2\dots,M$在$|z|<1$上都是解析的并且在闭圆盘也是连续。因为$B(z)$在开圆盘上可以展开成级数形式，函数的零点一定可以提出因子$(z-z_k)$即$B(z)=(z-z_k)^{m_{k}}g(z),g(z_k\neq 0)$，$m_1+m_2+\dots +m_M=N$，则我们考虑函数
+\begin{align*}
+    F(z)=\frac{B(z)}{\prod_{k=1}^{N}b_k(z)}
+\end{align*}
+其中$b_k(z)$对应的指数$m_k$为多少就除以多少个$b_k(z)$使得$F(z)$在开圆盘上没有零点。(需要注意的时$m_k$一定是有限的，若$m_k=\infty$在$z_k$周围的小邻域内展开的泰勒级数恒为零，由解析函数的性质可以知道$B(z)$在整个区域上为0，而这与我们的条件矛盾，因为函数在闭圆盘上连续且在$|z|=1$上为1，所以在靠近$|z|=1$的圆盘内一定接近1，这就产生了矛盾，所以$m_k$有限，$N$有限).我们得到了函数$F(z)$在开圆盘上解析，在闭圆盘上连续。由最大模原理可以证明$|F(z)|\le |F(1)|=\frac{1}{1}=1$。再考虑$\frac{1}{F(z)}$同样满足在开圆盘上解析，在闭圆盘上连续有$\left|\frac{1}{F(z)}\right|\le \left|\frac{1}{F(1)}\right|=1\Rightarrow F(z)\ge 1$，所以$F(z)=1$(这说明圆周上恒为1的条件限制住了$F(z)$的取值)，所以$F(z)=e^{i\theta},\theta\in\mathbb{R}$，故有\boxed{B(z)=e^{i\theta}\prod_{k=1}^{N}\frac{z-z_k}{1-\bar{z_k}z}}
+其中$\theta\in \mathbb{R},\space n\in\mathbb{N},\space |z_k|<q\quad (1\le k\le N)$
+\end{zm}
+\end{document}
